@@ -1,0 +1,17 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Directory
+metadata:
+  name:  e2e-test-directory
+spec:
+  forProvider:
+    description: "$BUILD_ID- created by e2e tests"
+    directoryAdmins:
+    - "$SECOND_DIRECTORY_ADMIN_EMAIL"
+    - "$TECHNICAL_USER_EMAIL"
+    directoryFeatures:
+    - "DEFAULT"
+    displayName: $BUILD_ID-e2e-test-directory
+    labels:
+      custom_label: ["custom_value"]
+      another_label: ["onevalue", "twovalue"]
+      BUILD_ID: [ "$BUILD_ID" ]

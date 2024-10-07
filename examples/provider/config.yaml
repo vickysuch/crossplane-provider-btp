@@ -1,0 +1,19 @@
+apiVersion: btp.sap.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  serviceAccountSecret:
+    source: Secret
+    secretRef:
+      namespace: default
+      name: sa-provider-secret
+      key: credentials
+  cisCredentials:
+    source: Secret
+    secretRef:
+      namespace: default
+      name: cis-provider-secret
+      key: data
+  # cliServerUrl: ...
+  # globalAccount: ...

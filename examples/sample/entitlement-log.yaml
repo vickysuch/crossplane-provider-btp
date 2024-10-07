@@ -1,0 +1,15 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: audit-log-viewer-entl
+  namespace: default
+spec:
+  forProvider:
+    serviceName: auditlog-viewer
+    servicePlanName: default
+    #enable: true
+    amount: 1
+    subaccountRef:
+      name: entitlement-sa-test
+  providerConfigRef:
+    name: account-provider-config

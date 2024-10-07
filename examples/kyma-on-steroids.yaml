@@ -1,0 +1,165 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: ServiceManager
+metadata:
+  name: servicemanager-test
+  namespace: default
+spec:
+  providerConfigRef:
+    name: default
+  writeConnectionSecretToRef:
+    name: service-manager
+    namespace: default
+  forProvider:
+    subaccountRef:
+      name: test-stephan
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: CloudManagement
+metadata:
+  name: cis-local
+  namespace: default
+spec:
+  providerConfigRef:
+    name: default
+  writeConnectionSecretToRef:
+    name: cis-local
+    namespace: default
+  forProvider:
+    serviceManagerRef:
+      name: servicemanager-test
+    subaccountRef:
+      name: test-stephan
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: kyma-azure
+spec:
+  providerConfigRef:
+    name: default
+  forProvider:
+    serviceName: kymaruntime
+    servicePlanName: azure
+    amount: 1
+    subaccountRef:
+      name: test-stephan
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: cis-entitlement
+  namespace: default
+spec:
+  providerConfigRef:
+    name: default
+  forProvider:
+    serviceName: cis
+    servicePlanName: local
+    enable: true
+    subaccountRef:
+      name: test-stephan
+---
+apiVersion: environment.btp.sap.crossplane.io/v1alpha1
+kind: KymaEnvironment
+metadata:
+  name: my-kyma-instance
+spec:
+  writeConnectionSecretToRef:
+    name: kyma-kube-config
+    namespace: default
+  providerConfigRef:
+    name: default
+  subaccountRef:
+    name: test-stephan
+  cloudManagementRef:
+    name: cis-local
+  forProvider:
+    planName: azure
+    parameters:
+      region: northeurope
+      machineType: Standard_D4_v3
+      autoScalerMin: 3
+      autoScalerMax: 20
+      oidc:
+        issuerURL: <ISSUER_URL>
+        clientID: <CLIENT_ID>
+        usernameClaim: email
+        groupsClaim: groups
+        signingAlgs: [ RS256 ]
+        usernamePrefix: "-"
+      administrators:
+        - <EMAIL>
+
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Subaccount
+metadata:
+  namespace: default
+  name: test-stephan
+spec:
+  forProvider:
+    globalAccountRef:
+      name:  co-ga-canary
+    displayName: test-max-kyma-oidc
+    region: eu12
+    subdomain: test-max-kyma-oidc
+    subaccountAdmins:
+      - <EMAIL>
+  providerConfigRef:
+    name: default
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: GlobalAccount
+metadata:
+  annotations:
+    crossplane.io/external-name: SAP Cloud Orchestration Canary
+  name: co-ga-canary
+spec:
+  providerConfigRef:
+    name: default
+---
+apiVersion: oidc.orchestrate.cloud.sap/v1alpha1
+kind: CertBasedOIDCLogin
+metadata:
+  name: kyma-oidc
+spec:
+  writeConnectionSecretToRef:
+    name: oidc-token
+    namespace: default
+  forProvider:
+    certificate:
+      source: Secret
+      secretRef:
+        key: cert
+        name: example-login-cert-secret
+        namespace: default
+    clientId: <CLIENT_ID>
+    issuer: <ISSUER_URL>
+    password:
+      source: Secret
+      secretRef:
+        key: password
+        name: example-login-pass-secret
+        namespace: default
+---
+apiVersion: oidc.orchestrate.cloud.sap/v1alpha1
+kind: KubeConfigGenerator
+metadata:
+  name: kyma-oidc
+spec:
+  writeConnectionSecretToRef:
+    name: kyma-ready-kubeconfig
+    namespace: default
+  forProvider:
+    kubeconfigTemplate:
+      source: Secret
+      secretRef:
+        key: kubeconfig
+        name: kyma-kube-config
+        namespace: default
+    oidcToken:
+      source: Secret
+      secretRef:
+        key: IDToken
+        name: oidc-token
+        namespace: default

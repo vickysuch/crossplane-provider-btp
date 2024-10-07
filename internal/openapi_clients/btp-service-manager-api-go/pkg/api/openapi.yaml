@@ -1,0 +1,4237 @@
+openapi: 3.0.1
+info:
+  description: "Service Manager provides REST APIs that are responsible for the creation\
+    \ and consumption of service instances in any connected runtime environment. \n\
+    \nUse the Service Manager APIs to perform various operations related to your platforms,\
+    \ service brokers, service instances, and service bindings. \nGet service plans\
+    \ and service offerings associated with your environment. \n\n\n#### Platforms\
+    \ \n\nPlatforms are OSBAPI-enabled software systems on which applications and\
+    \ services are hosted.  \nWith the Service Manager, you can now register your\
+    \ platform and enable it to consume the SAP BTP services from your native environment.\
+    \  \nThis registration results in a returned set of credentials that are needed\
+    \ to deploy the Service Manager agent.  \n\n\n#### Service Brokers \n\nService\
+    \ brokers act as brokers between the Service Manager and a platform’s marketplace\
+    \ to advertise catalogues of service offerings and service plans. \nThey also\
+    \ receive and process the requests from the marketplace to provision, bind, unbind,\
+    \ and deprovision these offerings and plans. \n\n\n#### Service Instances \n\n\
+    Service instances are instantiations of service plans that make the functionality\
+    \ of those service plans available for consumption. \n\n\n#### Service Bindings\
+    \ \n\nService bindings provide access details to existing service instances. \n\
+    The access details are part of the service bindings' ‘credentials’ property, and\
+    \ typically include access URLs and credentials. \n\n\n#### Service Plans \n\n\
+    Service plans represent sets of capabilities provided by a service offering. \n\
+    For example, database service offerings provide different plans for different\
+    \ database versions or sizes, while the Service Manager plans offer different\
+    \ data access levels. \n\n\n#### Service Offerings \n\nService offerings are advertisements\
+    \ of the services that are supported by a service broker. \nFor example, software\
+    \ that you can consume in the subaccount. \nService offerings are related to one\
+    \ or more service plans."
+  termsOfService: http://www.sap.com
+  title: Service Manager
+  version: "1.0"
+externalDocs:
+  description: Working with the SAP Service Manager APIs
+  url: https://help.sap.com/viewer/09cc82baadc542a688176dce601398de/Cloud/en-US/4e19b11211fe4ca2a266d3fdd4a72188.html
+servers:
+- url: "https://service-manager.cfapps.{landscape}.hana.ondemand.com"
+  variables:
+    landscape:
+      default: eu10
+      description: Host of the SAP BTP data center
+security:
+- oAuth2ClientCredentials: []
+tags:
+- description: "Platforms<br/>Platforms are OSBAPI-enabled software systems on which\
+    \ applications and services are hosted. <br/> With the SAP Service Manager, you\
+    \ can now register your platform and enable it to consume the SAP BTP services\
+    \ from your native environment. <br/> This registration results in a returned\
+    \ set of credentials that are needed to deploy the SAP Service Manager agent.<br/>\
+    \ For more information, visit our <a href=\"https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/20195bf3b6e64189966e08f669c275e1.html\"\
+    >SAP Help Portal</a>. <br/> "
+  name: Platforms
+- description: "Service Brokers<br/> Service brokers act as brokers between the SAP\
+    \ Service Manager and a platform’s marketplace to advertise catalogues of service\
+    \ offerings and service plans. </br> They also receive and process the requests\
+    \ from the marketplace to provision, bind, unbind, and deprovision these offerings\
+    \ and plans."
+  name: Service Brokers
+- description: Service Instances<br/> Service instances are instantiations of service
+    plans that make the functionality of those service plans available for consumption.
+  name: Service Instances
+- description: "Service Bindings<br/> Service bindings provide access details to existing\
+    \ service instances.</br> The access details are part of the service bindings'\
+    \ ‘credentials’ property, and typically include access URLs and credentials."
+  name: Service Bindings
+- description: "Service Plans<br/> Service plans represent sets of capabilities provided\
+    \ by a service offering. <br/>For example, database service offerings provide\
+    \ different plans for different database versions or sizes, while the SAP Service\
+    \ Manager plans offer different data access levels."
+  name: Service Plans
+- description: "Service Offerings <br/>Service offerings are advertisements of the\
+    \ services that are supported by a service broker.<br/>For example, software that\
+    \ you can consume in the subaccount.</br> Service offerings are related to one\
+    \ or more service plans."
+  name: Service Offerings
+- description: Operations <br/>Operations are long-running background jobs created
+    after specific SAP Service Manager APIs have been called.<br> Use the Operations
+    API to get the status of these jobs.
+  name: Operations
+- description: "Agents <br/>SAP Service Manager agents are representatives of the\
+    \ Service Manager's functionality in the platform you use.<br/>They are deployed\
+    \ in your runtime platform (e.g., Kubernetes cluster) and are responsible for\
+    \ synchronizing all content available in your SAP BTP subaccount with it.<br/>Agents\
+    \ also establish a notification channel with the SAP Service Manager so that any\
+    \ changes in the availability of SAP BTP offerings (for example, as the result\
+    \ of changed entitlements) are immediately reflected in your runtime platformorm."
+  name: Agents
+paths:
+  /v1/agents/versions:
+    get:
+      description: View the list of all agent versions with which SAP Service Manager
+        is compatible.
+      operationId: getSupportedAgentsVersions
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentVersionsResponseObject'
+          description: Found the list of supported agent versions (Ok)
+      summary: Get all agent versions
+      tags:
+      - Agents
+  /v1/platforms:
+    get:
+      description: "View the list of all platforms in the subaccount that are registered\
+        \ for service consumption. <br/><br/>Required scopes: <xsappname>.subaccount.platform.read"
+      operationId: getAllPlatforms
+      parameters:
+      - description: "Filters the response based on the field query. <br/> If used,\
+          \ must be a nonempty string.<br/>For example:<br/> type eq 'kubernetes'"
+        explode: true
+        in: query
+        name: fieldQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the label query. <br/> If used,\
+          \ must be a nonempty string.<br/>For example:<br/> environment eq 'dev'"
+        explode: true
+        in: query
+        name: labelQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "You get this parameter in the response list of the API if the\
+          \ total number of items to return (num_items) is larger than the number\
+          \ of items returned in a single API call (max_items).</br> You get a different\
+          \ token in each response to be used in each consecutive call as long as\
+          \ there are more items to list.</br> Use the returned tokens to get the\
+          \ full list of items associated with your subaccount.</br> If this is the\
+          \ first time you are calling the API, leave this field empty."
+        explode: true
+        in: query
+        name: token
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 'The maximum number of platforms to return in the response. '
+        explode: true
+        in: query
+        name: max_items
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformResponseList'
+          description: Found platforms (OK)
+          headers:
+            Link:
+              description: "URL to obtain the next page. <br/> This is an alternative\
+                \ method to use the token, by including it in the relatve path of\
+                \ the API call. <br> Example: <br> /v1/platforms?max_items=2&token=MTQ5Mg%3D%3D"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get all platforms
+      tags:
+      - Platforms
+    post:
+      description: "Register a new platform to enable the consumption of services\
+        \ in the subaccount, via the SAP Service Manager. <br><br> **Note:** <br>The\
+        \ platform credentials are only available during the registration process\
+        \ in the response.<br/> They can't be retrieved later. <br/><br/>Required\
+        \ scopes: <xsappname>.subaccount.platform.manage"
+      operationId: registerPlatfrom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterPlatformRequestPayload'
+        description: Details of the platform to register.
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredPlatformResponseObject'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Register a platform
+      tags:
+      - Platforms
+  /v1/platforms/{platformID}:
+    delete:
+      description: "Unregister a specific platform from the SAP Service Manager.<br>If\
+        \ the platform still uses service instances or bindings, you must either delete\
+        \ them first or use the \"cascade\" parameter. <br><br/> **Note:** <br/>Once\
+        \ the platform has been unregistered, its credentials are invalidated and\
+        \ can no longer be used. <br/><br/>Required scopes: <xsappname>.subaccount.platform.manage"
+      operationId: unregisterPlatform
+      parameters:
+      - description: The ID of the platform to unregister.
+        explode: false
+        in: path
+        name: platformID
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Whether to cascade-delete all the services and bindings that
+          are related to the platform.
+        example: false
+        explode: true
+        in: query
+        name: cascade
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Unregistered the platform (OK)
+        "202":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Accepted
+          headers:
+            Location:
+              description: "A path to the operation status. <br/> This path serves\
+                \ as the relative path for the base request URI of the API: 'Get operation\
+                \ status'."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Platform not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Target resource updated since this request sent (Precondition
+            Failed)
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unprocessable Entity
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Unregister a platform
+      tags:
+      - Platforms
+    get:
+      description: "View details of a specific platform registered for consumption\
+        \ in the subaccount. <br/><br/>Required scopes: <xsappname>.subaccount.platform.read"
+      operationId: getPlatformById
+      parameters:
+      - description: The ID of the registered platform for which to get details.
+        explode: false
+        in: path
+        name: platformID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformResponseObject'
+          description: Found platform (OK)
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Platform not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get platform details
+      tags:
+      - Platforms
+    patch:
+      description: "Update details of a registered  platform. <br/><br/>Required scopes:\
+        \ <xsappname>.subaccount.platform.manage"
+      operationId: patchPlatfrom
+      parameters:
+      - description: The ID of the registered platform to update.
+        explode: false
+        in: path
+        name: platformID
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlatformRequestPayload'
+        description: Details of the platform to update.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedPlatformResponseObject'
+          description: Updated (OK)
+        "202":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Accepted
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not Found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Target resource updated since this request sent (Precondition
+            Failed)
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Update a platform
+      tags:
+      - Platforms
+  /v1/service_bindings:
+    get:
+      description: "View the list of all service bindings. <br/><br/>Required scopes:\
+        \ <xsappname>.subaccount.service_binding.read"
+      operationId: getAllServiceBindings
+      parameters:
+      - description: "Filters the response based on the field query.<br> If used,\
+          \ must be a nonempty string.<br/>For example:<br> ready eq 'true'"
+        explode: true
+        in: query
+        name: fieldQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the label query. <br> If used,\
+          \ must be a nonempty string.<br/>For example:<br> environment eq 'dev'"
+        explode: true
+        in: query
+        name: labelQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "You get this parameter in the response list of the API if the\
+          \ total number of items to return (num_items) is larger than the number\
+          \ of items returned in a single API call (max_items).</br> You get a different\
+          \ token in each response to be used in each consecutive call as long as\
+          \ there are more items to list.</br> Use the returned tokens to get the\
+          \ full list of resources associated with your subaccount.</br> If this is\
+          \ the first time you are calling the API, leave this field empty."
+        explode: true
+        in: query
+        name: token
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 'The maximum number of service bindings to return in the response. '
+        explode: true
+        in: query
+        name: max_items
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceBindingResponseList'
+          description: Found service bindings (OK)
+          headers:
+            Link:
+              description: "URL to obtain the next page.  <br/> This is an alternative\
+                \ method to use the token, by including it in the relatve path of\
+                \ the API call. <br> Example: <br> /v1/service_bindings?max_items=2&token=MTQ5Mg%3D%3D"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get all service bindings
+      tags:
+      - Service Bindings
+    post:
+      description: "Create a new service binding between a service instance and an\
+        \ application. <br/><br/>Required scopes: <xsappname>.subaccount.service_binding.manage"
+      operationId: createServiceBinding
+      parameters:
+      - description: Whether to perform this operation asynchronously.
+        example: true
+        explode: true
+        in: query
+        name: async
+        required: false
+        schema:
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateServiceBindingRequestPayload'
+        description: Configure a new service binding to obtain the access credentials
+          to the service instance.
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedServiceBindingResponseObject'
+          description: Created
+        "202":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Accepted
+          headers:
+            Location:
+              description: "A path to the operation status. </br> This path serves\
+                \ as the relative path for the base request URI of the API: 'Get operation\
+                \ status'."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Target resource updated since this request sent (Precondition
+            Failed)
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unprocessable Entity
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Create a service binding
+      tags:
+      - Service Bindings
+  /v1/service_bindings/{serviceBindingID}:
+    delete:
+      description: "Delete a specific service binding. <br/><br/>Required scopes:\
+        \ <xsappname>.subaccount.service_binding.manage"
+      operationId: deleteServiceBinding
+      parameters:
+      - description: The ID of the service binding to delete.
+        explode: false
+        in: path
+        name: serviceBindingID
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Whether to perform this operation asynchronously.
+        example: true
+        explode: true
+        in: query
+        name: async
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Deleted service binding (OK)
+        "202":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Accepted
+          headers:
+            Location:
+              description: "A path to the operation status. <br/> This path serves\
+                \ as the relative path for the base request URI of the API: 'Get operation\
+                \ status'."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service binding not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Target resource updated since this request sent (Precondition
+            Failed)
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unprocessable Entity
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Delete a service binding
+      tags:
+      - Service Bindings
+    get:
+      description: "Get details about a specific service binding. <br/><br/>Required\
+        \ scopes: <xsappname>.subaccount.service_binding.read"
+      operationId: getServiceBindingById
+      parameters:
+      - description: The ID of the service binding for which to get details.
+        explode: false
+        in: path
+        name: serviceBindingID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceBindingResponseObject'
+          description: Found service binding (OK)
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service binding not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get service binding details
+      tags:
+      - Service Bindings
+  /v1/service_bindings/{serviceBindingID}/parameters:
+    get:
+      description: |-
+        View the additional configuration parameters of a specified service binding.<br> The parameters were provided during the creation of the binding as part of the request payload. <br>See *POST /v1/service_bindings* API for more details. <br/><br/>**Prerequisite:**<br/>To get configuration parameters, bindings_retrievable field of the service offering to which this binding relates, must be set to true ("bindings_retrievable":true).<br/>To check, use the API: *GET /v1/service_offerings/{serviceOfferingID}*  <br/><br/>Required scopes:
+        <xsappname>.subaccount.service_binding.read
+      operationId: getServiceBindingParametersById
+      parameters:
+      - description: The ID of the service binding for which to get parameters.
+        explode: false
+        in: path
+        name: serviceBindingID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                description: parameters
+                example:
+                  host: localhost
+                  port: 8082
+                type: object
+          description: Found service binding configuration parameters.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service binding configuration parameters were not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+        "502":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Geteway
+      summary: Get service binding parameters
+      tags:
+      - Service Bindings
+  /v1/service_brokers:
+    get:
+      description: "View the list of all service brokers in the subaccount. <br/><br/>Required\
+        \ scopes: <xsappname>.subaccount.broker.read"
+      operationId: getAllServiceBrokers
+      parameters:
+      - description: "Filters the response based on the field query.  <br/> If used,\
+          \ must be a nonempty string.<br/>For example:<br> name eq 'my service broker'."
+        explode: true
+        in: query
+        name: fieldQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the label query. <br> If used,\
+          \ must be a nonempty string.<br>For example:<br/> environment eq 'dev'."
+        explode: true
+        in: query
+        name: labelQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: You get this parameter in the response list of the API if the
+          total number of items to return (num_items) is larger than the number of
+          items returned in a single API call (max_items).<br/> You get a different
+          token in each response to be used in each consecutive call as long as there
+          are more items to list.<br/> Use the returned tokens to get the full list
+          of resources associated with your subaccount.<br/> Leave the field empty
+          if this is the first time you are calling the API.
+        explode: true
+        in: query
+        name: token
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 'The maximum number of service brokers to return in the response. '
+        explode: true
+        in: query
+        name: max_items
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceBrokerResponseList'
+          description: Found service brokers (OK)
+          headers:
+            Link:
+              description: "URL to obtain the next page.  <br/> This is an alternative\
+                \ method to use the token, by including it in the relatve path of\
+                \ the API call. <br> Example: <br> /v1/service_brokers?max_items=2&token=MTQ5Mg%3D%3D"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get all service brokers
+      tags:
+      - Service Brokers
+  /v1/service_brokers/{serviceBrokerID}:
+    get:
+      description: "View details of a specific service broker registered in the subaccount.\
+        \ <br><br>Required scopes: <xsappname>.subaccount.broker.read"
+      operationId: getServiceBrokerId
+      parameters:
+      - description: The ID of the service broker for which to get details.
+        explode: false
+        in: path
+        name: serviceBrokerID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceBrokerResponseObject'
+          description: Found service broker (OK)
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service broker not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get service broker details.
+      tags:
+      - Service Brokers
+  /v1/service_instances:
+    get:
+      description: "View the list of all service instances in the subaccount. <br/><br/>\
+        \ Required scopes: <xsappname>.subaccount.service_instance.read"
+      operationId: getAllServiceInstances
+      parameters:
+      - description: "Filters the response based on the field query. <br> If used,\
+          \ must be a nonempty string.<br/>For example:<br> usable eq 'true'"
+        explode: true
+        in: query
+        name: fieldQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the label query. <br>If used,\
+          \ must be a nonempty string.<br/>For example:<br/> environment eq 'dev'"
+        explode: true
+        in: query
+        name: labelQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "You get this parameter in the response list of the API if the\
+          \ total number of items to return (num_items) is larger than the number\
+          \ of items returned in a single API call (max_items).<br/> You get a different\
+          \ token in each response to be used in each consecutive call as long as\
+          \ there are more items to list.<br/> Use the returned tokens to get the\
+          \ full list of resources associated with your subaccount.<br/> If this is\
+          \ the first time you are calling the API, leave this field empty."
+        explode: true
+        in: query
+        name: token
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 'The maximum number of service instances to return in the response. '
+        explode: true
+        in: query
+        name: max_items
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceInstanceResponseList'
+          description: Found service instances (OK)
+          headers:
+            Link:
+              description: "URL to obtain the next page.  <br/> This is an alternative\
+                \ method to use the token, by including it in the relatve path of\
+                \ the API call. <br> Example: <br> /v1/service_instances?max_items=2&token=MTQ5Mg%3D%3D"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get all service instances
+      tags:
+      - Service Instances
+    post:
+      description: "Create a new service instance after receiving a provisioning request\
+        \ from SAP BTP.<br><br>Note<br>The service instance you create are environment-agnostic,\
+        \ and on a subaccount level.<br>To create environment-specific instances,\
+        \ use environment-native tools (e.g. cf CLI for Cloud Foundry instances).\
+        \ <br/><br/>Required scopes: <xsappname>.subaccount.service_instance.manage"
+      operationId: createServiceInstance
+      parameters:
+      - description: Whether to perform this operation asynchronously.
+        example: true
+        explode: true
+        in: query
+        name: async
+        required: false
+        schema:
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/json:
+            examples:
+              CreateByOfferingAndPlanName:
+                value:
+                  name: my-service-instance
+                  service_offering_name: service-offering-name
+                  service_plan_name: service-plan-name
+              CreateByPlanID:
+                value:
+                  name: my-service-instance
+                  service_plan_id: fd1fdfd8-4891-8d91-46334e04600d
+            schema:
+              $ref: '#/components/schemas/CreateServiceInstanceRequestPayload'
+        description: Details of the service instance to register.<br/><br/>Create
+          an instance by providing the values for one of the following sections:<br/>
+          •CreateByPlanID<br/> •CreateByOfferingAndPlanName
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedServiceInstanceResponseObject'
+          description: Created
+        "202":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Accepted
+          headers:
+            Location:
+              description: "A path to the operation status. <br/> This path serves\
+                \ as the relative path for the base request URI of the API: 'Get operation\
+                \ status'."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Target resource has been updated since the request (Precondition
+            Failed)
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unprocessable Entity
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Create a service instance
+      tags:
+      - Service Instances
+  /v1/service_instances/{serviceInstanceID}:
+    delete:
+      description: "Delete a provisioned service instance. <br/><br/>Required scopes:\
+        \ <xsappname>.subaccount.service_instance.manage"
+      operationId: deleteServiceInstance
+      parameters:
+      - description: The ID of the provisioned service instance to delete.
+        explode: false
+        in: path
+        name: serviceInstanceID
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Whether to perform this operation asynchronously.
+        example: true
+        explode: true
+        in: query
+        name: async
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Deleted service instance (OK)
+        "202":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Accepted
+          headers:
+            Location:
+              description: "A path to the operation status. <br> This path serves\
+                \ as the relative path for the base request URI of the API: 'Get operation\
+                \ status'."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service instance not found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Target resource updated since this request sent (Precondition
+            Failed)
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unprocessable Entity
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Delete a service instance
+      tags:
+      - Service Instances
+    get:
+      description: "View details of a specific provisioned service instance. <br/><br/>Required\
+        \ scopes: <xsappname>.subaccount.service_instance.read"
+      operationId: getServiceInstanceById
+      parameters:
+      - description: The ID of the provisioned service instance for which to get details.
+        explode: false
+        in: path
+        name: serviceInstanceID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceInstanceResponseObject'
+          description: Found service instance (OK)
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service instance not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get service instance details
+      tags:
+      - Service Instances
+    patch:
+      description: "Update details of a specified provisioned service instance. <br/><br/>Required\
+        \ scopes: <xsappname>.subaccount.service_instance.manage"
+      operationId: updateServiceInstance
+      parameters:
+      - description: The ID of the provisioned service instance to update.
+        explode: false
+        in: path
+        name: serviceInstanceID
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Whether to perform this operation asynchronously.
+        example: true
+        explode: true
+        in: query
+        name: async
+        required: false
+        schema:
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateServiceInstanceRequestPayload'
+        description: Details of the service instance to update.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedServiceInstanceResponseObject'
+          description: Updated service instance (OK)
+        "202":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Accepted
+          headers:
+            Location:
+              description: "A path to the operation status. <br/> This path serves\
+                \ as the relative path for the base request URI of the API: 'Get operation\
+                \ status'."
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Not Found
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unprocessable Entity
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Update a service instance
+      tags:
+      - Service Instances
+  /v1/service_instances/{serviceInstanceID}/parameters:
+    get:
+      description: "View the additional configuration parameters of a specified provisioned\
+        \ service instance.<br><br>The configuration parameters were provided either\
+        \ during the creation of the instance as part of the request payload of the\
+        \ API: *POST/v1/service_instances*, or during the update of the service instance\
+        \ by using the API: *PATCH/v1/service_instances.*<br/><br/>**Prerequisite:**<br/>To\
+        \ get configuration parameters, instances_retrievable field of the service\
+        \ offering to which this service instance relates, must be set to true (\"\
+        instances_retrievable\":true).<br/>To check, use the API: *GET /v1/service_offerings/{serviceOfferingID}*<br/><br/>\
+        \ Required scopes: <xsappname>.subaccount.service_instance.read"
+      operationId: getServiceInstanceParameters
+      parameters:
+      - description: The ID of the provisioned service instance for which to get parameters.
+        explode: false
+        in: path
+        name: serviceInstanceID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                description: parameters
+                example:
+                  allowedConnections: 100
+                  billing-account: abcde12345
+                  supportExternalConnectivity: true
+                type: object
+          description: Found the configuration parameters of the service instance
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service instance configuration parameters were not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+        "502":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Geteway
+      summary: Get service instance parameters
+      tags:
+      - Service Instances
+  /v1/service_offerings:
+    get:
+      description: "View the list of all service offerings. <br/><br/>Required scopes:\
+        \ <xsappname>.subaccount.service_offering.read"
+      operationId: getServiceOfferings
+      parameters:
+      - description: "Use this parameter to specify the environment for which you\
+          \ want to list service offerings. Valid values: [btp, kubernetes, cloudfoundry].\
+          \ <br/>If left empty, service offerings associated with btp (Service Manager\
+          \ instances on a subaccount level) are returned."
+        explode: true
+        in: query
+        name: environment
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the field query. <br/> If used,\
+          \ must be a nonempty string.<br/>For example:<br/> ready eq 'true'"
+        explode: true
+        in: query
+        name: fieldQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the label query. <br/> If used,\
+          \ must be a nonempty string.<br/>For example:<br/> environment eq 'dev'"
+        explode: true
+        in: query
+        name: labelQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "You get this parameter in the response list of the API if the\
+          \ total number of items to return (num_items) is larger than the number\
+          \ of items returned in a single API call (max_items).</br> You get a different\
+          \ token in each response to be used in each consecutive call as long as\
+          \ there are more items to list.</br> Use the returned tokens to get the\
+          \ full list of resources associated with your subaccount.</br> If this is\
+          \ the first time you are calling the API, leave this field empty."
+        explode: true
+        in: query
+        name: token
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 'The maximum number of service offerings to return in the response. '
+        explode: true
+        in: query
+        name: max_items
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceOfferingResponseList'
+          description: Found service offerings (OK)
+          headers:
+            Link:
+              description: "URL to obtain the next page.  <br/> This is an alternative\
+                \ method to use the token, by including it in the relatve path of\
+                \ the API call. <br> Example: <br> /v1/service_offerings?max_items=2&token=MTQ5Mg%3D%3D"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get all service offerings
+      tags:
+      - Service Offerings
+  /v1/service_offerings/{serviceOfferingID}:
+    get:
+      description: "Get details of a specific service offering. <br/><br/>Required\
+        \ scopes: <xsappname>.subaccount.service_offering.read"
+      operationId: getServiceOfferingById
+      parameters:
+      - description: The ID of the service offering for which to get details.
+        explode: false
+        in: path
+        name: serviceOfferingID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceOfferingResponseObject'
+          description: Found service offering (OK)
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get service offering details
+      tags:
+      - Service Offerings
+  /v1/service_plans:
+    get:
+      description: "View the list of service plans. <br/><br/>Required scopes: <xsappname>.subaccount.service_plan.read"
+      operationId: getAllServicePlans
+      parameters:
+      - description: "Use this parameter to specify the environment for which you\
+          \ want to list service plans. Valid values: [btp, kubernetes, cloudfoundry].\
+          \ <br/>If left empty, service plans associated with btp (Service Manager\
+          \ instances on a subaccount level) are returned."
+        explode: true
+        in: query
+        name: environment
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the field query.<br/> If used,\
+          \ must be a nonempty string.<br/>For example:<br/> ready eq 'true'"
+        explode: true
+        in: query
+        name: fieldQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Filters the response based on the label query. <br/>If used,\
+          \ must be a nonempty string.<br/>For example:<br/> environment eq 'dev'"
+        explode: true
+        in: query
+        name: labelQuery
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "You get this parameter in the response list of the API if the\
+          \ total number of items to return (num_items) is larger than the number\
+          \ of items returned in a single API call (max_items).</br> You get a different\
+          \ token in each response to be used in each consecutive call as long as\
+          \ there are more items to list.</br> Use the returned tokens to get the\
+          \ full list of resources associated with your subaccount.</br> If this is\
+          \ the first time you are calling this API, leave this field empty."
+        explode: true
+        in: query
+        name: token
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 'The maximum number of service plans to return in the response. '
+        explode: true
+        in: query
+        name: max_items
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePlanResponseList'
+          description: Found service plans (OK)
+          headers:
+            Link:
+              description: "URL to obtain the next page.  <br/> This is an alternative\
+                \ method to use the token, by including it in the relatve path of\
+                \ the API call. <br> Example: <br> /v1/service_plans?max_items=2&token=MTQ5Mg%3D%3D"
+              explode: false
+              schema:
+                type: string
+              style: simple
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: BadRequest
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get service plans
+      tags:
+      - Service Plans
+  /v1/service_plans/{servicePlanID}:
+    get:
+      description: "Get details of a specific service plan. <br/><br/>Required scopes:\
+        \ <xsappname>.subaccount.service_plan.read"
+      operationId: getServicePlansByServiceId
+      parameters:
+      - description: The ID of the service plan for which to get details.
+        explode: false
+        in: path
+        name: servicePlanID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServicePlanResponseObject'
+          description: Found service plan (OK)
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Service plan not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get service plan details
+      tags:
+      - Service Plans
+  /v1/{resourceType}/{resourceID}/operations/{operationID}:
+    get:
+      description: "Check the status of the asynchronous operation you created after\
+        \ the POST, DELETE, or PATCH (where applicable) calls of the following API\
+        \ groups: Service Instances, and Service Bindings.</br> The APIs provide a\
+        \ boolean request parameter 'async' whose default value is TRUE.</br>Use the\
+        \ parameter to generate an asynchronous operation, if needed. </br>In the\
+        \ **Location** response headers of the APIs, you get the path parameters that\
+        \ are required for this API."
+      operationId: getSingleOperation
+      parameters:
+      - description: The type of the SAP Service Manager resource.
+        explode: false
+        in: path
+        name: resourceType
+        required: true
+        schema:
+          enum:
+          - platforms
+          - service_brokers
+          - service_bindings
+          - service_instances
+          type: string
+        style: simple
+      - description: The ID of the previously created entity of the specified resource
+          type.
+        explode: false
+        in: path
+        name: resourceID
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The ID of the operation for which to get status.
+        explode: false
+        in: path
+        name: operationID
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationResponseObject'
+          description: Found asynchronous operation (OK)
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Operation not found
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Too Many Requests
+      summary: Get operation status
+      tags:
+      - Operations
+components:
+  schemas:
+    AgentVersionsResponseObject:
+      example:
+        cf:
+        - 0.11.10
+        - 0.11.11
+        - 0.11.12
+        k8s:
+        - 0.8.11
+        - 0.8.14
+        cf-sap:
+        - 0.6.20
+        - 0.6.24
+      properties:
+        cf:
+          description: The list of compatible agent versions for the Cloud Foundry
+            environment.
+          example:
+          - 0.11.10
+          - 0.11.11
+          - 0.11.12
+          items:
+            type: string
+          type: array
+        cf-sap:
+          description: The list of compatible agent versions for the cf-sap environment.
+          example:
+          - 0.6.20
+          - 0.6.24
+          items:
+            type: string
+          type: array
+        k8s:
+          description: The list of compatible agent versions for the Kubernetes environment.
+          example:
+          - 0.8.11
+          - 0.8.14
+          items:
+            type: string
+          type: array
+      type: object
+    CreateByOfferingAndPlanName:
+      properties:
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The name of the new service instance.<br/> Can't be an empty
+            object.
+          example: my-service-instance
+          type: string
+        parameters:
+          additionalProperties:
+            type: string
+          description: "Some services support providing of additional configuration\
+            \ parameters during instance creation.<br>Pass these parameters as key-value\
+            \ pairs.<br> For the list of supported configuration parameters, see the\
+            \ documentation of a particular service offering.<br> You can also use\
+            \ the *GET /v1/service_instances/{serviceInstanceID}/parameters* API later\
+            \ to view the parameters defined during this step."
+          example:
+            parameter1: value1
+            parameter2: value2
+          type: object
+        service_offering_name:
+          description: The name of the service offering to use for the service instance.
+          example: service-offering-name
+          type: string
+        service_plan_name:
+          description: The name of the service plan to use for the service instance.
+          example: service-plan-name
+          type: string
+      required:
+      - name
+      - service_offering_name
+      - service_plan_name
+      type: object
+    CreateByPlanID:
+      example:
+        name: my-service-instance
+        service_plan_id: fd1fdfd8-4891-8d91-46334e04600d
+        parameters:
+          parameter1: value1
+          parameter2: value2
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The name of the new service instance.<br/> Can't be an empty
+            object.
+          example: my-service-instance
+          type: string
+        parameters:
+          additionalProperties:
+            type: string
+          description: "Some services support providing of additional configuration\
+            \ parameters during instance creation.<br>Pass these parameters as key-value\
+            \ pairs.<br> For the list of supported configuration parameters, see the\
+            \ documentation of a particular service offering.<br> You can also use\
+            \ the *GET /v1/service_instances/{serviceInstanceID}/parameters* API later\
+            \ to view the parameters defined during this step."
+          example:
+            parameter1: value1
+            parameter2: value2
+          type: object
+        service_plan_id:
+          description: The ID of the service plan to use for the service instance.
+          example: fd1fdfd8-4891-8d91-46334e04600d
+          type: string
+      required:
+      - name
+      - service_plan_id
+      type: object
+    CreateServiceBindingRequestPayload:
+      example:
+        name: my-service-binding
+        bind_resource:
+          app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+          space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+        service_instance_id: asd124bc21-df28-4891-8d91-46334e04600d
+        parameters:
+          parameter1: value1
+          parameter2: value2
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        bind_resource:
+          description: "The bind_resource object contains platform-specific information\
+            \ related to the context in which the service is used.<br> The examples\
+            \ of some common fields to use: <br> app_guid - A string GUID of an application\
+            \ associated with the binding. For credentials bindings. Must be unique\
+            \ within the scope of the platform.<br>app_guid - Represents the scope\
+            \ to which the binding applies within the platform. <br>For example, in\
+            \ Kubernetes it can map to a namespace.<br> The scope of what the platform\
+            \ maps the app_guid to is platform-specific and can vary across binding\
+            \ requests.<br>route - URL of the intermediate application. For route\
+            \ services bindings."
+          example:
+            app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+            space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+          type: object
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The name of the service binding.
+          example: my-service-binding
+          type: string
+        parameters:
+          additionalProperties:
+            type: string
+          description: "Some services support providing of additional configuration\
+            \ parameters during binding creation. Pass these parameters as key-value\
+            \ pairs.<br> For the list of supported configuration parameters, see the\
+            \ documentation of a particular service offering.<br>You can also use\
+            \ the *GET /v1/service_bindings/{serviceBindingID}/parameters* API later\
+            \ to view the parameters defined during this step."
+          example:
+            parameter1: value1
+            parameter2: value2
+          type: object
+        service_instance_id:
+          description: The id of the service instance associated with the binding.
+          example: asd124bc21-df28-4891-8d91-46334e04600d
+          type: string
+      required:
+      - name
+      - service_instance_id
+      type: object
+    CreateServiceInstanceRequestPayload:
+      oneOf:
+      - $ref: '#/components/schemas/CreateByPlanID'
+      - $ref: '#/components/schemas/CreateByOfferingAndPlanName'
+    CreatedServiceBindingResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        credentials: "{}"
+        ready: true
+        context:
+          account: my-account
+        name: my-service-binding
+        created_at: 2000-01-23T04:56:07.000+00:00
+        bind_resource:
+          app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+          space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+        id: my-service-binding-123-id
+        service_instance_id: asd124bc21-df28-4891-8d91-46334e04600d
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        bind_resource:
+          additionalProperties:
+            type: string
+          description: The bound resources.
+          example:
+            app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+            space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+          type: object
+        context:
+          additionalProperties:
+            type: string
+          description: Contextual data for the resource.
+          example:
+            account: my-account
+          type: object
+        created_at:
+          description: The time the binding was created. <br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        credentials:
+          description: Credentials to access the binding.
+          type: object
+        id:
+          description: The ID of the service binding.
+          example: my-service-binding-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The name of the service binding.
+          example: my-service-binding
+          type: string
+        ready:
+          description: Whether the resource is ready to be used.
+          type: boolean
+        service_instance_id:
+          description: The ID of the service instance associated with the binding.
+          example: asd124bc21-df28-4891-8d91-46334e04600d
+          type: string
+        updated_at:
+          description: The last time the binding was updated.<br/> In ISO 8601 format.
+          format: date-time
+          type: string
+      type: object
+    CreatedServiceInstanceResponseObject:
+      example:
+        shared: true
+        created_at: 2000-01-23T04:56:07.000+00:00
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+        referenced_instance_id: referenced_instance_id
+        usable: true
+        maintenance_info:
+          version: 1.0.0
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        context:
+          account: my-account
+        name: my-service-instance
+        platform_id: platform_id
+        service_plan_id: service_plan_id
+        id: my-service-instance-123-id
+        dashboard_url: http://my-service-dashboard.com
+      properties:
+        context:
+          additionalProperties:
+            type: string
+          description: Contextual data for the resource.
+          example:
+            account: my-account
+          type: object
+        created_at:
+          description: The time the service instance was created. <br/>In ISO 8601
+            format:</br> YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        dashboard_url:
+          description: The URL of the web-based management UI for the service instance.
+          example: http://my-service-dashboard.com
+          type: string
+        id:
+          description: The ID of the service instance.
+          example: my-service-instance-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        maintenance_info:
+          additionalProperties:
+            type: string
+          description: The maintenance info associated with the service instance.
+          example:
+            version: 1.0.0
+          type: object
+        name:
+          description: The name of the service instance.
+          example: my-service-instance
+          type: string
+        platform_id:
+          description: The ID of the platform associated with the service instance.
+          type: string
+        ready:
+          description: Whether the service instance is ready for consumption.
+          type: boolean
+        referenced_instance_id:
+          description: The ID of the instance to which the service instance refers.
+          type: string
+        service_plan_id:
+          description: The ID of the serivce plan associated with the service instance.
+          type: string
+        shared:
+          description: Whether the service instance is shared.
+          type: boolean
+        updated_at:
+          description: The last time the service instance was updated.<br/>In ISO
+            8601 format.
+          format: date-time
+          type: string
+        usable:
+          description: Whether the resource can be used.
+          type: boolean
+      type: object
+    Credentials:
+      description: Credentials to  authenticate with the SAP Service Manager.
+      example:
+        basic:
+          password: password
+          username: username
+      properties:
+        basic:
+          $ref: '#/components/schemas/Credentials_basic'
+      type: object
+    Error:
+      description: A response object that contains details about the error.
+      example:
+        description: description
+        error: error
+      properties:
+        description:
+          description: The description of the error.
+          type: string
+        error:
+          description: The name of the error.
+          type: string
+      type: object
+    Label:
+      description: The request object that contains details about the labels to update.
+      example:
+        op: add
+        values:
+        - value1
+        - value2
+        key: label1
+      properties:
+        key:
+          description: The name of the label.
+          example: label1
+          type: string
+        op:
+          description: 'The operation to perform on a label.<br/><br/> Possible values:'
+          enum:
+          - add
+          - remove
+          type: string
+        values:
+          description: The list of values for the label
+          example:
+          - value1
+          - value2
+          items:
+            type: string
+          type: array
+      type: object
+    Labels:
+      additionalProperties:
+        items:
+          type: string
+        type: array
+      description: Additional data associated with the resource entity. <br><br>Can
+        be an empty object.
+      example:
+        label1:
+        - value1
+        - value2
+        - value3
+        label2:
+        - value1
+        - value2
+        - value3
+      type: object
+    ListedPlatformResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        name: my-platform
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: You can use this platform to develop and to test your applications.
+        id: my-platform-123-id
+        type: kubernetes
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        created_at:
+          description: The time the platform was created. <br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: The description of the platform.
+          example: You can use this platform to develop and to test your applications.
+          type: string
+        id:
+          description: "The ID of the platform.</br> You can use this ID to get details\
+            \ about the platform, to update or to delete it.<br/> See the GET, PATCH,\
+            \ or DELETE APIs for the Platforms group."
+          example: my-platform-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The name of the platform.
+          example: my-platform
+          type: string
+        ready:
+          description: Whether the platform is ready for consumption.
+          type: boolean
+        type:
+          description: "The type of the platform.<br><br> Possible values: "
+          enum:
+          - kubernetes
+          - cloud foundry
+          type: string
+        updated_at:
+          description: The last time the platform was updated. <br/>In ISO 8601 format.
+          format: date-time
+          type: string
+      type: object
+    ListedServiceBindingResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        credentials: "{}"
+        ready: true
+        context:
+          account: my-account
+        name: my-service-binding
+        created_at: 2000-01-23T04:56:07.000+00:00
+        bind_resource:
+          app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+          space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+        id: my-service-binding-123-id
+        service_instance_id: asd124bc21-df28-4891-8d91-46334e04600d
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        bind_resource:
+          additionalProperties:
+            type: string
+          description: Contains the resources associated with the binding.
+          example:
+            app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+            space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+          type: object
+        context:
+          additionalProperties:
+            type: string
+          description: Contextual data for the resource.
+          example:
+            account: my-account
+          type: object
+        created_at:
+          description: The time the binding was created.<br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        credentials:
+          description: Credentials to access the binding.
+          type: object
+        id:
+          description: The ID of the service binding.
+          example: my-service-binding-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The name of the service binding.
+          example: my-service-binding
+          type: string
+        ready:
+          description: Whether the service binding is ready.
+          type: boolean
+        service_instance_id:
+          description: The ID of the service instance associated with the binding.
+          example: asd124bc21-df28-4891-8d91-46334e04600d
+          type: string
+        updated_at:
+          description: The last time the binding was updated.<br/> In ISO 8601 format.
+          format: date-time
+          type: string
+      type: object
+    ListedServiceBrokerResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        name: my service broker
+        broker_url: http://myservicebroker.domain.com
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: Some description here.
+        id: my-service-broker-123-id
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        broker_url:
+          description: The URL of the service broker.
+          example: http://myservicebroker.domain.com
+          type: string
+        created_at:
+          description: The time the service broker was created. <br/><br/>In ISO 8601
+            format:</br> YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: The description of the service broker.
+          example: Some description here.
+          type: string
+        id:
+          description: The ID of the service broker.
+          example: my-service-broker-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The name of the service broker.
+          example: my service broker
+          type: string
+        ready:
+          description: Whether the service broker is ready.
+          type: boolean
+        updated_at:
+          description: The last time the service broker was updated. <br/>In ISO 8601
+            format.
+          format: date-time
+          type: string
+      required:
+      - id
+      - name
+      type: object
+    ListedServiceInstanceResponseObject:
+      example:
+        shared: true
+        created_at: 2000-01-23T04:56:07.000+00:00
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+        referenced_instance_id: referenced_instance_id
+        usable: true
+        maintenance_info:
+          description: version changes
+          version: 1.0.0
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        context:
+          account: my-account
+        name: my-service-instance
+        platform_id: platform_id
+        service_plan_id: service_plan_id
+        id: my-service-instance-123-id
+        dashboard_url: http://my-service-dashboard.com
+      properties:
+        context:
+          additionalProperties:
+            type: string
+          description: Contextual data for the resource.
+          example:
+            account: my-account
+          type: object
+        created_at:
+          description: The time the service instance was created.<br/>In ISO 8601
+            format:</br> YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        dashboard_url:
+          description: The URL of the web-based management UI for the service instance.
+          example: http://my-service-dashboard.com
+          type: string
+        id:
+          description: The ID of the service instance.
+          example: my-service-instance-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        maintenance_info:
+          additionalProperties:
+            type: string
+          description: The maintenance information associated with the service instance.
+          example:
+            description: version changes
+            version: 1.0.0
+          type: object
+        name:
+          description: The name of the service instance.
+          example: my-service-instance
+          type: string
+        platform_id:
+          description: The ID of the platform to which the service instance belongs.
+          type: string
+        ready:
+          description: Whether the service instance is ready.
+          type: boolean
+        referenced_instance_id:
+          description: The ID of the instance to which the service instance refers.
+          type: string
+        service_plan_id:
+          description: The ID of the service plan associated with the service instance.
+          type: string
+        shared:
+          description: Whether the service instance is shared.
+          type: boolean
+        updated_at:
+          description: The last time the service instance was updated.<br/> In ISO
+            8601 format.
+          format: date-time
+          type: string
+        usable:
+          description: Whether the service instance can be used.
+          type: boolean
+      type: object
+    OperationResponseObject:
+      example:
+        resource_type: resource_type
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: description
+        deletion_scheduled: 2000-01-23T04:56:07.000+00:00
+        type: CREATE
+        transitive_resources:
+        - operation_type: operation_type
+          criteria: criteria
+          id: 0aba8e41-5e69-44b1-974f-83100
+          type: type
+        - operation_type: operation_type
+          criteria: criteria
+          id: 0aba8e41-5e69-44b1-974f-83100
+          type: type
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+        reschedule: true
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        platform_id: platform_id
+        correlation_id: correlation_id
+        resource_id: resource_id
+        id: dsdssd498da96-e5f3-4402-8
+        state: in progress
+        errors:
+        - description: description
+          error: error
+        - description: description
+          error: error
+      properties:
+        correlation_id:
+          description: The correlation ID received from the request related to this
+            operation.
+          type: string
+        created_at:
+          description: The time the resource was created. <br/>In ISO 8601 format.
+          format: date-time
+          type: string
+        deletion_scheduled:
+          description: The time the resource is scheduled for deletion. <br/>In ISO
+            8601 format:</br> YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: Details about the operation for customer-facing UI.
+          type: string
+        errors:
+          description: The list of the errors if the operation has failed.
+          items:
+            $ref: '#/components/schemas/Error'
+          type: array
+        id:
+          description: The ID of the operation.
+          example: dsdssd498da96-e5f3-4402-8
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        platform_id:
+          description: The ID of the platform associated with the operation.
+          type: string
+        ready:
+          description: Whether the resource is ready.
+          type: boolean
+        reschedule:
+          description: Whether the operation has reached a checkpoint and can be executed
+            again.
+          type: boolean
+        resource_id:
+          description: "The ID of the resource. <br> Exists if: \"state\": \"succeeded\"\
+            , and also for PATCH and DELETE requests"
+          type: string
+        resource_type:
+          description: "The type of the resource (e.g. service_brokers, service_instances)."
+          type: string
+        state:
+          description: "Valid values are: in progress, succeeded, and failed. <br>\
+            \ While the state is \"in progress\", the platform should continue polling.\
+            \ <br/> The responses: \"state\": \"succeeded\" or \"state\": \"failed\"\
+            \ must cause the platform to stop polling."
+          enum:
+          - in progress
+          - succeeded
+          - failed
+          type: string
+        transitive_resources:
+          items:
+            $ref: '#/components/schemas/TransitiveResource'
+          type: array
+        type:
+          description: 'The type of the operation.<br><br> Possible values:'
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+          type: string
+        updated_at:
+          description: "The last time the resource was updated. <br/>In ISO 8601 format.\
+            \ <br/>Recommended field if \"state\": \"succeeded\" or \"state\": \"\
+            failed\"."
+          format: date-time
+          type: string
+      type: object
+    PlatformResponseList:
+      example:
+        num_items: 1
+        items:
+        - updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my-platform
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: You can use this platform to develop and to test your applications.
+          id: my-platform-123-id
+          type: kubernetes
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+        - updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my-platform
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: You can use this platform to develop and to test your applications.
+          id: my-platform-123-id
+          type: kubernetes
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+        token: token
+      properties:
+        items:
+          description: The list of response objects that contains details about the
+            platforms.
+          items:
+            $ref: '#/components/schemas/ListedPlatformResponseObject'
+          type: array
+        num_items:
+          description: The number of platforms associated with the subaccount.
+          example: 1
+          type: integer
+        token:
+          description: "Use this token when you call the API again to get more platforms\
+            \ associated with your subaccount.</br> The token field indicates that\
+            \ the total number of platforms to view in the list (num_items) is larger\
+            \ than the defined maximum number of platforms to be returned after a\
+            \ single API call (max_items). </br> If the field is not present, either\
+            \ all the platforms were included in the first response, or you have reached\
+            \ the end of the list."
+          type: string
+      type: object
+    PlatformResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        name: my-platform
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: This platform is used for consumption.
+        id: my-platform-123-id
+        type: kubernetes
+        last_operation:
+          resource_type: resource_type
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          deletion_scheduled: 2000-01-23T04:56:07.000+00:00
+          type: CREATE
+          transitive_resources:
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          reschedule: true
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          platform_id: platform_id
+          correlation_id: correlation_id
+          resource_id: resource_id
+          id: dsdssd498da96-e5f3-4402-8
+          state: in progress
+          errors:
+          - description: description
+            error: error
+          - description: description
+            error: error
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        created_at:
+          description: The time the platform was created. <br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: The description of the platform.
+          example: This platform is used for consumption.
+          type: string
+        id:
+          description: The ID of the platform. <br/> You can use this ID to update
+            or to delete the platform.<br/> See the PATCH and DELETE calls for the
+            **Platforms** group.
+          example: my-platform-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        last_operation:
+          $ref: '#/components/schemas/OperationResponseObject'
+        name:
+          description: The name of the platform.
+          example: my-platform
+          type: string
+        ready:
+          description: Whether the platform is ready for consumption.
+          type: boolean
+        type:
+          description: "The type of the platform.<br><br> Possible values: "
+          enum:
+          - kubernetes
+          - cloud foundry
+          type: string
+        updated_at:
+          description: The last time the platform was updated. <br/>In ISO 8601 format.
+          format: date-time
+          type: string
+      type: object
+    RegisterPlatformRequestPayload:
+      example:
+        name: my-platform
+        description: Try our new features.
+        type: kubernetes
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        description:
+          description: The description of the platform for customer-facing UIs.
+          example: Try our new features.
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: "The CLI-friendly name of the platform.<br/>A CLI-friendly\
+            \ name is a short string that only contains alphanumeric characters, periods,\
+            \ and hyphens.<br> It can't contain white spaces. <br>The name must not\
+            \ exceed 255 characters, but it is recommended to keep it much shorter,\
+            \ for the convenience of using short names in CLI commands."
+          example: my-platform
+          type: string
+        type:
+          description: "The type of the platform. <br><br> Possible values: "
+          enum:
+          - kubernetes
+          type: string
+      required:
+      - name
+      - type
+      type: object
+    RegisteredPlatformResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        credentials:
+          basic:
+            password: password
+            username: username
+        ready: true
+        name: my-platform
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: Use the platform to develop and to test your software.
+        id: my-platform-123-id
+        type: kubernetes
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        created_at:
+          description: The time the platform was created. <br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        credentials:
+          $ref: '#/components/schemas/Credentials'
+        description:
+          description: The description of the platform.
+          example: Use the platform to develop and to test your software.
+          type: string
+        id:
+          description: "The ID of the platform.<br>You can use this ID to get details\
+            \ about the platform, to update, or to delete the platform.<br/> See the\
+            \ GET, PATCH, and DELETE APIs for the **Platforms** group."
+          example: my-platform-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The technical name of the platform.
+          example: my-platform
+          type: string
+        ready:
+          description: Whether the platform is ready for consumption.
+          type: boolean
+        type:
+          description: "The type of the platform.<br/><br/> Possible values: "
+          enum:
+          - kubernetes
+          type: string
+        updated_at:
+          description: 'The last time the platform was updated. <br/>In ISO 8601 format.
+            </br> '
+          format: date-time
+          type: string
+      type: object
+    ServiceBindingResponseList:
+      example:
+        num_items: 1
+        items:
+        - updated_at: 2000-01-23T04:56:07.000+00:00
+          credentials: "{}"
+          ready: true
+          context:
+            account: my-account
+          name: my-service-binding
+          created_at: 2000-01-23T04:56:07.000+00:00
+          bind_resource:
+            app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+            space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+          id: my-service-binding-123-id
+          service_instance_id: asd124bc21-df28-4891-8d91-46334e04600d
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+        - updated_at: 2000-01-23T04:56:07.000+00:00
+          credentials: "{}"
+          ready: true
+          context:
+            account: my-account
+          name: my-service-binding
+          created_at: 2000-01-23T04:56:07.000+00:00
+          bind_resource:
+            app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+            space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+          id: my-service-binding-123-id
+          service_instance_id: asd124bc21-df28-4891-8d91-46334e04600d
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+        token: wcxdX
+      properties:
+        items:
+          description: The list of the response objects that contains details about
+            the service bindings.
+          items:
+            $ref: '#/components/schemas/ListedServiceBindingResponseObject'
+          type: array
+        num_items:
+          description: The number of the service bindings associated with the subaccount.
+          example: 1
+          type: integer
+        token:
+          description: "Use this token when you call the API again to get more service\
+            \ bindings associated with your subaccount.</br> The token field indicates\
+            \ that the total number of service bindings to view in the list (num_items)\
+            \ is larger than the defined maximum number of service bindings to be\
+            \ returned after a single API call (max_items). </br> If the field is\
+            \ not present, either all the service bindings were included in the first\
+            \ response, or you have reached the end of the list."
+          example: wcxdX
+          type: string
+      type: object
+    ServiceBindingResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        credentials: "{}"
+        ready: true
+        context:
+          account: my-account
+        name: my-service-binding
+        created_at: 2000-01-23T04:56:07.000+00:00
+        bind_resource:
+          app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+          space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+        id: my-service-binding-123-id
+        service_instance_id: asd124bc21-df28-4891-8d91-46334e04600d
+        last_operation:
+          resource_type: resource_type
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          deletion_scheduled: 2000-01-23T04:56:07.000+00:00
+          type: CREATE
+          transitive_resources:
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          reschedule: true
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          platform_id: platform_id
+          correlation_id: correlation_id
+          resource_id: resource_id
+          id: dsdssd498da96-e5f3-4402-8
+          state: in progress
+          errors:
+          - description: description
+            error: error
+          - description: description
+            error: error
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        bind_resource:
+          additionalProperties:
+            type: string
+          description: The bound resources.
+          example:
+            app_guid: 5e76c9bf-d5e3-46bf-9877-6d8dddfc8a45
+            space_guid: 15823972-c216-4ba5-9f3f-e75b0b891297
+          type: object
+        context:
+          additionalProperties:
+            type: string
+          description: Contextual data for the resource.
+          example:
+            account: my-account
+          type: object
+        created_at:
+          description: The time the binding was created.<br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        credentials:
+          description: Credentials to access the binding.
+          type: object
+        id:
+          description: The ID of the service binding.
+          example: my-service-binding-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        last_operation:
+          $ref: '#/components/schemas/OperationResponseObject'
+        name:
+          description: The name of the service binding.
+          example: my-service-binding
+          type: string
+        ready:
+          description: Whether the service binding is ready.
+          type: boolean
+        service_instance_id:
+          description: The ID of the service instance associated with the binding.
+          example: asd124bc21-df28-4891-8d91-46334e04600d
+          type: string
+        updated_at:
+          description: The last time the binding was updated.<br/> In ISO 8601 format.
+          format: date-time
+          type: string
+      type: object
+    ServiceBrokerResponseList:
+      example:
+        num_items: 1
+        items:
+        - updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my service broker
+          broker_url: http://myservicebroker.domain.com
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: Some description here.
+          id: my-service-broker-123-id
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+        - updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my service broker
+          broker_url: http://myservicebroker.domain.com
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: Some description here.
+          id: my-service-broker-123-id
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+        token: wcxdX
+      properties:
+        items:
+          description: The list of response objects that contains details about the
+            service brokers.
+          items:
+            $ref: '#/components/schemas/ListedServiceBrokerResponseObject'
+          type: array
+        num_items:
+          description: The number of the service brokers associated with the subaccount.
+          example: 1
+          type: integer
+        token:
+          description: "Use this token when you call the API again to get more service\
+            \ brokers associated with your subaccount.</br> The token field indicates\
+            \ that the total number of service brokers to view in the list (num_items)\
+            \ is larger than the defined maximum number of service brokers to be returned\
+            \ after a single API call (max_items). </br> If the field is not present,\
+            \ either all the service brokers were included in the first response,\
+            \ or you have reached the end of the list."
+          example: wcxdX
+          type: string
+      type: object
+    ServiceBrokerResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        name: my service broker
+        broker_url: http://myservicebroker.domain.com
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: Some description here.
+        id: my-service-broker-123-id
+        last_operation:
+          resource_type: resource_type
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          deletion_scheduled: 2000-01-23T04:56:07.000+00:00
+          type: CREATE
+          transitive_resources:
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          reschedule: true
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          platform_id: platform_id
+          correlation_id: correlation_id
+          resource_id: resource_id
+          id: dsdssd498da96-e5f3-4402-8
+          state: in progress
+          errors:
+          - description: description
+            error: error
+          - description: description
+            error: error
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        broker_url:
+          description: The URL of the service broker.
+          example: http://myservicebroker.domain.com
+          type: string
+        created_at:
+          description: The time the service broker was created. <br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: The description of the service broker.
+          example: Some description here.
+          type: string
+        id:
+          description: The ID of the service broker.
+          example: my-service-broker-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        last_operation:
+          $ref: '#/components/schemas/OperationResponseObject'
+        name:
+          description: The name of the service broker.
+          example: my service broker
+          type: string
+        ready:
+          description: Whether the service broker is ready.
+          type: boolean
+        updated_at:
+          description: The last time the service broker was updated. <br/>In ISO 8601
+            format.
+          format: date-time
+          type: string
+      required:
+      - id
+      - name
+      type: object
+    ServiceInstanceResponseList:
+      example:
+        num_items: 1
+        items:
+        - shared: true
+          created_at: 2000-01-23T04:56:07.000+00:00
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          referenced_instance_id: referenced_instance_id
+          usable: true
+          maintenance_info:
+            description: version changes
+            version: 1.0.0
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          context:
+            account: my-account
+          name: my-service-instance
+          platform_id: platform_id
+          service_plan_id: service_plan_id
+          id: my-service-instance-123-id
+          dashboard_url: http://my-service-dashboard.com
+        - shared: true
+          created_at: 2000-01-23T04:56:07.000+00:00
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          referenced_instance_id: referenced_instance_id
+          usable: true
+          maintenance_info:
+            description: version changes
+            version: 1.0.0
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          context:
+            account: my-account
+          name: my-service-instance
+          platform_id: platform_id
+          service_plan_id: service_plan_id
+          id: my-service-instance-123-id
+          dashboard_url: http://my-service-dashboard.com
+        token: wcxdX
+      properties:
+        items:
+          description: The list of response objects that contains details about the
+            service instances.
+          items:
+            $ref: '#/components/schemas/ListedServiceInstanceResponseObject'
+          type: array
+        num_items:
+          description: The number of service instances associated with the subaccount.
+          example: 1
+          type: integer
+        token:
+          description: "Use this token when you call the API again to get more service\
+            \ instances associated with your subaccount.</br> The token field indicates\
+            \ that the total number of service instances to view in the list (num_items)\
+            \ is larger than the defined maximum number of service instances to be\
+            \ returned after a single API call (max_items). </br> If the field is\
+            \ not present, either all the instances were included in the first response,\
+            \ or you have reached the end of the list."
+          example: wcxdX
+          type: string
+      type: object
+    ServiceInstanceResponseObject:
+      example:
+        shared: true
+        created_at: 2000-01-23T04:56:07.000+00:00
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+        referenced_instance_id: referenced_instance_id
+        usable: true
+        maintenance_info:
+          version: 1.0.0
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        context:
+          account: my-account
+        name: my-service-instance
+        platform_id: platform_id
+        service_plan_id: service_plan_id
+        id: my-service-instance-123-id
+        dashboard_url: http://my-service-dashboard.com
+        last_operation:
+          resource_type: resource_type
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          deletion_scheduled: 2000-01-23T04:56:07.000+00:00
+          type: CREATE
+          transitive_resources:
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          - operation_type: operation_type
+            criteria: criteria
+            id: 0aba8e41-5e69-44b1-974f-83100
+            type: type
+          labels:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          reschedule: true
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          platform_id: platform_id
+          correlation_id: correlation_id
+          resource_id: resource_id
+          id: dsdssd498da96-e5f3-4402-8
+          state: in progress
+          errors:
+          - description: description
+            error: error
+          - description: description
+            error: error
+      properties:
+        context:
+          additionalProperties:
+            type: string
+          description: Contextual data for the resource.
+          example:
+            account: my-account
+          type: object
+        created_at:
+          description: The time the resource was created. <br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        dashboard_url:
+          description: "The URL of a web-based management user interface for the service\
+            \ instance, also known as service dashboard."
+          example: http://my-service-dashboard.com
+          type: string
+        id:
+          description: The ID of the service instance.
+          example: my-service-instance-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        last_operation:
+          $ref: '#/components/schemas/OperationResponseObject'
+        maintenance_info:
+          additionalProperties:
+            type: string
+          description: The maintenance info for the resource.
+          example:
+            version: 1.0.0
+          type: object
+        name:
+          description: The name of the service instance.
+          example: my-service-instance
+          type: string
+        platform_id:
+          description: The platform ID.
+          type: string
+        ready:
+          type: boolean
+        referenced_instance_id:
+          description: The ID of the instance to which the service instance refers.
+          type: string
+        service_plan_id:
+          description: The ID of the serivce plan.
+          type: string
+        shared:
+          description: Whether the service instance is shared.
+          type: boolean
+        updated_at:
+          description: The last time the resource was updated. <br/> In ISO 8601 format.
+          format: date-time
+          type: string
+        usable:
+          description: Wheher the resource can be used.
+          type: boolean
+      type: object
+    ServiceOfferingMetadata:
+      example:
+        longDescription: longDescription
+        documentationUrl: documentationUrl
+        displayName: displayName
+        imageUrl: imageUrl
+        supportUrl: supportUrl
+      properties:
+        displayName:
+          description: The name of the service offering for customer-facing UIs.
+          type: string
+        documentationUrl:
+          description: The URL to the associated documentation.
+          type: string
+        imageUrl:
+          description: The URL to the associated image.
+          type: string
+        longDescription:
+          description: The description of the service offering.
+          type: string
+        supportUrl:
+          description: The support URL for the service offering.
+          type: string
+      type: object
+    ServiceOfferingResponseList:
+      example:
+        num_items: 1
+        items:
+        - allow_context_updates: true
+          catalog_name: catalog_name
+          metadata:
+            longDescription: longDescription
+            documentationUrl: documentationUrl
+            displayName: displayName
+            imageUrl: imageUrl
+            supportUrl: supportUrl
+          instances_retrievable: true
+          broker_id: broker_id
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          tags:
+          - tags
+          - tags
+          catalog_id: catalog_id
+          bindable: true
+          plan_updateable: true
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my-service-offering
+          id: my-service-offering-123-id
+          bindings_retrievable: true
+        - allow_context_updates: true
+          catalog_name: catalog_name
+          metadata:
+            longDescription: longDescription
+            documentationUrl: documentationUrl
+            displayName: displayName
+            imageUrl: imageUrl
+            supportUrl: supportUrl
+          instances_retrievable: true
+          broker_id: broker_id
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: description
+          tags:
+          - tags
+          - tags
+          catalog_id: catalog_id
+          bindable: true
+          plan_updateable: true
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my-service-offering
+          id: my-service-offering-123-id
+          bindings_retrievable: true
+        token: wcxdX
+      properties:
+        items:
+          description: The list of the service offerings.
+          items:
+            $ref: '#/components/schemas/ServiceOfferingResponseObject'
+          type: array
+        num_items:
+          description: The number of service offerings associated with the subaccount.
+          example: 1
+          type: integer
+        token:
+          description: "Use this token when you call the API again to get more service\
+            \ offerings associated with your subaccount.</br> The token field indicates\
+            \ that the total number of service offerings to view in the list (num_items)\
+            \ is larger than the defined maximum number of service offerings to be\
+            \ returned after a single API call (max_items). </br> If the field is\
+            \ not present, either all the service offerings were included in the first\
+            \ response, or you have reached the end of the list."
+          example: wcxdX
+          type: string
+      type: object
+    ServiceOfferingResponseObject:
+      example:
+        allow_context_updates: true
+        catalog_name: catalog_name
+        metadata:
+          longDescription: longDescription
+          documentationUrl: documentationUrl
+          displayName: displayName
+          imageUrl: imageUrl
+          supportUrl: supportUrl
+        instances_retrievable: true
+        broker_id: broker_id
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: description
+        tags:
+        - tags
+        - tags
+        catalog_id: catalog_id
+        bindable: true
+        plan_updateable: true
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        name: my-service-offering
+        id: my-service-offering-123-id
+        bindings_retrievable: true
+      properties:
+        allow_context_updates:
+          description: Whether the context for the service offering can be updated.
+          type: boolean
+        bindable:
+          description: Whether the service offering is bindable.
+          type: boolean
+        bindings_retrievable:
+          description: Whether the bindings associated with the service offering can
+            be retrieved.
+          type: boolean
+        broker_id:
+          description: The ID of the broker that provides the service plan.
+          type: string
+        catalog_id:
+          description: The ID of the service offering as provided by the catalog.
+          type: string
+        catalog_name:
+          description: The catalog name of the service offering.
+          type: string
+        created_at:
+          description: The time the service offering was created. <br> In ISO 8601
+            format:</br> YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: The description of the service offering.
+          type: string
+        id:
+          description: The ID of the service offering.
+          example: my-service-offering-123-id
+          type: string
+        instances_retrievable:
+          description: Whether the service instances associated with the service offering
+            can be retrieved.
+          type: boolean
+        metadata:
+          $ref: '#/components/schemas/ServiceOfferingMetadata'
+        name:
+          description: The name of the service offering.
+          example: my-service-offering
+          type: string
+        plan_updateable:
+          description: Whether the offered plan can be updated.
+          type: boolean
+        ready:
+          description: Whether the service offering is ready to be advertised.
+          example: true
+          type: boolean
+        tags:
+          description: The list of tags for the service offering.
+          items:
+            type: string
+          type: array
+        updated_at:
+          description: The last time the service offering was updated. <br/> In ISO
+            8601 format.
+          format: date-time
+          type: string
+      type: object
+    ServicePlanMetadata:
+      example:
+        supportedMaxOSBVersion: "2.14"
+        supportedMinOSBVersion: "2.11"
+        supportedPlatforms:
+        - kubernetes
+        - kubernetes
+      properties:
+        supportedMaxOSBVersion:
+          description: The latest supported OSB version.
+          example: "2.14"
+          type: string
+        supportedMinOSBVersion:
+          description: The earliest supported OSB version.
+          example: "2.11"
+          type: string
+        supportedPlatforms:
+          description: Platforms supported by the service plan.
+          items:
+            enum:
+            - kubernetes
+            - cloudfoundry
+            type: string
+          type: array
+      type: object
+    ServicePlanResponseList:
+      example:
+        num_items: 1
+        items:
+        - catalog_id: id1234
+          bindable: true
+          catalog_name: name1
+          metadata:
+            supportedMaxOSBVersion: "2.14"
+            supportedMinOSBVersion: "2.11"
+            supportedPlatforms:
+            - kubernetes
+            - kubernetes
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my-service-plan
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: This service plan is on a monthly basis.
+          service_offering_id: "1234"
+          id: my-service-plan-123-id
+          free: true
+        - catalog_id: id1234
+          bindable: true
+          catalog_name: name1
+          metadata:
+            supportedMaxOSBVersion: "2.14"
+            supportedMinOSBVersion: "2.11"
+            supportedPlatforms:
+            - kubernetes
+            - kubernetes
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          ready: true
+          name: my-service-plan
+          created_at: 2000-01-23T04:56:07.000+00:00
+          description: This service plan is on a monthly basis.
+          service_offering_id: "1234"
+          id: my-service-plan-123-id
+          free: true
+        token: wcxdX
+      properties:
+        items:
+          description: The list of the response objects that contain details about
+            the service plans.
+          items:
+            $ref: '#/components/schemas/ServicePlanResponseObject'
+          type: array
+        num_items:
+          description: The number of service plans associated with the subaccount.
+          example: 1
+          type: integer
+        token:
+          description: "Use this token when you call the API again to get more service\
+            \ plans associated with your subaccount.</br> The token field indicates\
+            \ that the total number of service plans to view in the list (num_items)\
+            \ is larger than the defined maximum number of ervice plans to be returned\
+            \ after a single API call (max_items). </br> If the field is not present,\
+            \ either all the service plans were included in the first response, or\
+            \ you have reached the end of the list."
+          example: wcxdX
+          type: string
+      type: object
+    ServicePlanResponseObject:
+      example:
+        catalog_id: id1234
+        bindable: true
+        catalog_name: name1
+        metadata:
+          supportedMaxOSBVersion: "2.14"
+          supportedMinOSBVersion: "2.11"
+          supportedPlatforms:
+          - kubernetes
+          - kubernetes
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        name: my-service-plan
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: This service plan is on a monthly basis.
+        service_offering_id: "1234"
+        id: my-service-plan-123-id
+        free: true
+      properties:
+        bindable:
+          description: Whether the service plan is bindable.
+          type: boolean
+        catalog_id:
+          description: The ID of the service plan in the service broker catalog.
+          example: id1234
+          type: string
+        catalog_name:
+          description: The name of the associated service broker catalog.
+          example: name1
+          type: string
+        created_at:
+          description: The time the service plan was created.<br> In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: The description of the service plan.
+          example: This service plan is on a monthly basis.
+          type: string
+        free:
+          description: Whether the service plan is free.
+          type: boolean
+        id:
+          description: The ID of the service plan.
+          example: my-service-plan-123-id
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServicePlanMetadata'
+        name:
+          description: The name of the service plan.
+          example: my-service-plan
+          type: string
+        ready:
+          description: Whether the service plan is ready.
+          type: boolean
+        service_offering_id:
+          description: The ID of the service offering.
+          example: "1234"
+          type: string
+        updated_at:
+          description: The last time the service plan was updated.<br> In ISO 8601
+            format.
+          format: date-time
+          type: string
+      type: object
+    TransitiveResource:
+      example:
+        operation_type: operation_type
+        criteria: criteria
+        id: 0aba8e41-5e69-44b1-974f-83100
+        type: type
+      properties:
+        criteria:
+          description: The minimum criteria required to use the resource in the context
+            of the platform.
+          type: string
+        id:
+          description: The ID of the resource.
+          example: 0aba8e41-5e69-44b1-974f-83100
+          type: string
+        operation_type:
+          description: The type of the operation associated with the resource.
+          type: string
+        type:
+          description: The type of the resource.
+          type: string
+      type: object
+    UpdateLabelsPayload:
+      description: The list of labels to update for the resource.
+      items:
+        $ref: '#/components/schemas/Label'
+      type: array
+    UpdatePlatformRequestPayload:
+      example:
+        name: my-platform
+        description: Description goes here.
+        id: my-platform-123-id
+        type: kubernetes
+        labels:
+        - op: add
+          values:
+          - value1
+          - value2
+          key: label1
+        - op: add
+          values:
+          - value1
+          - value2
+          key: label1
+      properties:
+        description:
+          description: The description of the platform for customer-facing UIs.
+          example: Description goes here.
+          type: string
+        id:
+          description: "The ID of the platform to update. <br>Platform ID is a globally\
+            \ unique identifier (GUID). <br> GUID must be longer than 50 characters\
+            \ and only contains uppercase and lowercase letters, decimal digits, hyphens,\
+            \ periods, and underscores."
+          example: my-platform-123-id
+          type: string
+        labels:
+          description: The list of labels to update for the resource.
+          items:
+            $ref: '#/components/schemas/Label'
+          type: array
+        name:
+          description: "The CLI-friendly name of the platform to update.<br>A CLI-friendly\
+            \ name is a short string that only contains alphanumeric characters, periods,\
+            \ and hyphens. <br> It can't contain white spaces. <br> The name must\
+            \ not exceed 255 characters, but it is recommended to keep it much shorter,\
+            \ for the convenience of using short names in CLI commands."
+          example: my-platform
+          type: string
+        type:
+          description: 'The type of the platform.<br/><br/> Possible values:'
+          enum:
+          - kubernetes
+          type: string
+      type: object
+    UpdateServiceInstanceRequestPayload:
+      example:
+        name: my-service-instance
+        service_plan_id: dsdsdsadsa98898890dasdsa
+        parameters:
+          parameter1: value1
+          parameter2: value2
+        labels:
+        - op: add
+          values:
+          - value1
+          - value2
+          key: label1
+        - op: add
+          values:
+          - value1
+          - value2
+          key: label1
+      properties:
+        labels:
+          description: The list of labels to update for the resource.
+          items:
+            $ref: '#/components/schemas/Label'
+          type: array
+        name:
+          description: The name of the service instance to update.
+          example: my-service-instance
+          type: string
+        parameters:
+          additionalProperties:
+            type: string
+          description: "Some services support providing of additional configuration\
+            \ parameters during instance creation.<br>You can update these parameters.<br>For\
+            \ the list of supported configuration parameters, see the documentation\
+            \ of a particular service offering.<br>You can also use the *GET /v1/service_instances/{serviceInstanceID}/parameters*\
+            \ API later to view the parameters defined during this step."
+          example:
+            parameter1: value1
+            parameter2: value2
+          type: object
+        service_plan_id:
+          description: The ID of the service plan for the service instance to update.
+          example: dsdsdsadsa98898890dasdsa
+          type: string
+      type: object
+    UpdatedPlatformResponseObject:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        name: my-platform
+        created_at: 2000-01-23T04:56:07.000+00:00
+        description: Describe your platform here.
+        id: my-platform-123-id
+        type: kubernetes
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+      properties:
+        created_at:
+          description: The time the platform was created. <br/>In ISO 8601 format:</br>
+            YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        description:
+          description: The description of the platform for customer-facing UIs.
+          example: Describe your platform here.
+          type: string
+        id:
+          description: The ID of the updated platform.<br/>
+          example: my-platform-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        name:
+          description: The technical name of the platform.
+          example: my-platform
+          type: string
+        ready:
+          description: Whether the resource is ready for consumption.
+          type: boolean
+        type:
+          description: "The type of the platform.<br><br> Possible values: "
+          enum:
+          - kubernetes
+          type: string
+        updated_at:
+          description: The last time the platform was updated. <br/>In ISO 8601 format.
+          format: date-time
+          type: string
+      required:
+      - name
+      type: object
+    UpdatedServiceInstanceResponseObject:
+      example:
+        shared: true
+        created_at: 2000-01-23T04:56:07.000+00:00
+        labels:
+          label1:
+          - value1
+          - value2
+          - value3
+          label2:
+          - value1
+          - value2
+          - value3
+        referenced_instance_id: referenced_instance_id
+        usable: true
+        maintenance_info:
+          version: 1.0.0
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        ready: true
+        context:
+          account: my-account
+        name: my-service-instance
+        platform_id: platform_id
+        service_plan_id: service_plan_id
+        id: my-service-instance-123-id
+        dashboard_url: http://my-service-dashboard.com
+      properties:
+        context:
+          additionalProperties:
+            type: string
+          description: Contextual data for the resource.
+          example:
+            account: my-account
+          type: object
+        created_at:
+          description: The time the service instance was created. <br/>In ISO 8601
+            format:</br> YYYY-MM-DDThh:mm:ssTZD
+          format: date-time
+          type: string
+        dashboard_url:
+          description: The URL of the web-based management UI for the service instance.
+          example: http://my-service-dashboard.com
+          type: string
+        id:
+          description: The ID of the service instance.
+          example: my-service-instance-123-id
+          type: string
+        labels:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Additional data associated with the resource entity. <br><br>Can
+            be an empty object.
+          example:
+            label1:
+            - value1
+            - value2
+            - value3
+            label2:
+            - value1
+            - value2
+            - value3
+          type: object
+        maintenance_info:
+          additionalProperties:
+            type: string
+          description: The maintenance info for the resource.
+          example:
+            version: 1.0.0
+          type: object
+        name:
+          description: The name of the service instance.
+          example: my-service-instance
+          type: string
+        platform_id:
+          description: The ID of the platform associated with the service instance.
+          type: string
+        ready:
+          type: boolean
+        referenced_instance_id:
+          description: The ID of the instance to which the service instance refers.
+          type: string
+        service_plan_id:
+          description: The ID of the service plan associated with the service instance.
+          type: string
+        shared:
+          description: Whether the service instance is shared.
+          type: boolean
+        updated_at:
+          description: The last time the service instance was updated. </br> In ISO
+            8601 format.
+          format: date-time
+          type: string
+        usable:
+          type: boolean
+      type: object
+    Credentials_basic:
+      example:
+        password: password
+        username: username
+      properties:
+        password:
+          type: string
+        username:
+          type: string
+      type: object
+  securitySchemes:
+    oAuth2ClientCredentials:
+      description: To run the api you need to get a token.
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: "https://{subdomain}.authentication.{landscape}.hana.ondemand.com/oauth/token"
+      type: oauth2
+x-sap-shortText: Consume SAP BTP services in any connected runtime environment.
+x-sap-stateInfo:
+  state: Active

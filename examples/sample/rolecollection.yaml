@@ -1,0 +1,22 @@
+apiVersion: security.btp.orchestrate.cloud.sap/v1alpha1
+kind: RoleCollection
+metadata:
+  namespace: default
+  name: example-custom-admin-rolecollection
+spec:
+  forProvider:
+    name: "example-custom-admin-rolecollection"
+    description: "this is a custom rolecollection"
+    roles:
+      - name: "Destination Administrator"
+        roleTemplateAppId: "destination-xsappname!b9"
+        roleTemplateName: "Destination_Administrator"
+      - name: "Subaccount Admin"
+        roleTemplateAppId: "cis-local!b2"
+        roleTemplateName: "Subaccount_Admin"
+  apiCredentials:
+    source: "Secret"
+    secretRef:
+      name: xsuaa-subaccount-credentials
+      namespace: default
+      key: credentials

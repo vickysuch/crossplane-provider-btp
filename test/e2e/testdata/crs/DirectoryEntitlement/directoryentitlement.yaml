@@ -1,0 +1,22 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: DirectoryEntitlement
+metadata:
+  name: e2e-directory-ent-cis-local
+spec:
+  forProvider:
+    directoryRef:
+      name: e2e-directory-for-entitlement-testing
+    planName: local
+    serviceName: cis
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: DirectoryEntitlement
+metadata:
+  name: e2e-audit-log-viewer-ent
+spec:
+  forProvider:
+    serviceName: postgresql-db
+    planName: development
+    amount: 1
+    directoryRef:
+      name: e2e-directory-for-entitlement-testing

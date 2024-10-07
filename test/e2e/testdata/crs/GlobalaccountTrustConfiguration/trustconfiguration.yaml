@@ -1,0 +1,10 @@
+apiVersion: security.btp.sap.crossplane.io/v1alpha1
+kind: GlobalaccountTrustConfiguration
+metadata:
+  name: e2e-global-trustconfiguration
+spec:
+  forProvider:
+    name: $BUILD_ID-e2e-global-trust
+    description: "e2e-testing-of-global-trust"
+    identityProvider: "$IDP_URL"
+

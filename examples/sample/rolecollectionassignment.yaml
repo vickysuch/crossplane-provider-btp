@@ -1,0 +1,33 @@
+apiVersion: security.btp.sap.crossplane.io/v1alpha1
+kind: RoleCollectionAssignment
+metadata:
+  namespace: default
+  name: example-assigned-user
+spec:
+  forProvider:
+    origin: "sap.default"
+    roleCollectionName: "Subaccount Administrator"
+    userName: <EMAIL>
+  apiCredentials:
+    source: "Secret"
+    secretRef:
+      name: xsuaa-subaccount-credentials
+      namespace: default
+      key: credentials
+---
+apiVersion: security.btp.sap.crossplane.io/v1alpha1
+kind: RoleCollectionAssignment
+metadata:
+  namespace: default
+  name: example-assigned-group
+spec:
+  forProvider:
+    origin: "sap.default"
+    roleCollectionName: "Subaccount Administrator"
+    groupName: some-usergroup
+  apiCredentials:
+    source: "Secret"
+    secretRef:
+      name: xsuaa-subaccount-credentials
+      namespace: default
+      key: credentials

@@ -1,0 +1,106 @@
+[
+  {
+    "op": "replace",
+    "path": "/components/schemas/AssignedServicePlanSubaccountDTO/properties/createdDate/format",
+    "value": "number"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/AssignedServicePlanSubaccountDTO/properties/modifiedDate/format",
+    "value": "number"
+  },
+  {
+    "op": "add",
+    "path": "/components/schemas/BusinessCategoryResponseObject",
+    "value": {
+      "properties": {
+        "displayName": {
+          "description": "Display name of the business category for customer-facing UIs.",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique ID of the business category.",
+          "type": "string"
+        }
+      },
+      "title": "BusinessCategoryResponseObject",
+      "type": "object"
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/AssignedServiceResponseObject/properties/businessCategory",
+    "value": {
+        "$ref": "#/components/schemas/BusinessCategoryResponseObject"
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/EntitledServicesResponseObject/properties/businessCategory",
+    "value": {
+      "$ref": "#/components/schemas/BusinessCategoryResponseObject"
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/AssignedServiceResponseObject/properties/applicationCoordinates",
+    "value": {
+      "type": "object"
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/EntitledServicesResponseObject/properties/applicationCoordinates",
+    "value": {
+      "type": "object"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/paths/~1entitlements~1v1~1subaccountServicePlans/put/responses/409",
+    "value": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ApiExceptionResponseObject"
+          }
+        }
+      },
+      "description": "Conflict"
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/ApiExceptionResponseObject",
+    "value": {
+      "type": "object",
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "object",
+          "description": "List of assigned entitlements and their specifications.",
+          "properties": {
+            "code": {
+              "type": "number",
+              "description": "the error code."
+            },
+            "message": {
+              "type": "string",
+              "description": "error message helping to resolve the issue"
+            },
+            "target": {
+              "type": "string",
+              "description": "The susppect."
+            },
+            "correlationID": {
+              "type": "string",
+              "description": "in case of incident, please report this correlation id."
+            }
+          }
+        }
+      }
+    }
+  }
+]

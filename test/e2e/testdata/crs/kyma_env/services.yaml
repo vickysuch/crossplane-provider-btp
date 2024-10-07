@@ -1,0 +1,28 @@
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: ServiceManager
+metadata:
+  name: kyma-service-manager
+  namespace: default
+spec:
+  writeConnectionSecretToRef:
+    name: kyma-service-manager
+    namespace: default
+  forProvider:
+    subaccountRef:
+      name: kyma-test-subaccount
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: CloudManagement
+metadata:
+  name: kyma-cis-local
+  namespace: default
+spec:
+  writeConnectionSecretToRef:
+    name: kyma-cis-local
+    namespace: default
+  forProvider:
+    serviceManagerRef:
+      name: kyma-service-manager
+    subaccountRef:
+      name: kyma-test-subaccount

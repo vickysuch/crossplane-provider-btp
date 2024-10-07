@@ -1,0 +1,16 @@
+apiVersion: environment.btp.sap.crossplane.io/v1alpha1
+kind: KymaEnvironment
+metadata:
+  name: kyma-environment
+  namespace: default
+spec:
+  forProvider:
+    planName: azure
+    parameters:
+      {
+        "administrators": ["$TECHNICAL_USER_EMAIL"]
+      }
+  subaccountRef:
+    name: kyma-test-subaccount
+  cloudManagementRef:
+    name: kyma-cis-local

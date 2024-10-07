@@ -1,0 +1,17 @@
+/.cache
+/.work
+/_output
+cover.out
+/vendor
+/.vendor-new
+.vscode
+.idea
+.DS_Store
+/examples/provider/secret.yaml
+__debug_bin
+.env
+*.p12
+!internal/clients/oidc/test_keystores/**/*.p12
+/examples/sample/certs.sh
+crossplane-provider-btp-account.iml
+/test/e2e/testdata/secrets

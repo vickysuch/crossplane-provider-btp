@@ -1,0 +1,59 @@
+
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: test-12345-cis-entitlement
+  namespace: default
+spec:
+  forProvider:
+    serviceName: cis
+    servicePlanName: local
+    enable: true
+    amount: 2
+    subaccountRef:
+      name: co-mirza-sa-test
+  providerConfigRef:
+    name: account-provider-config
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: cls-entitlement-1
+  namespace: default
+spec:
+  forProvider:
+    serviceName: cloud-logging
+    servicePlanName: standard
+    amount: 2
+    subaccountRef:
+      name: co-mirza-sa-test
+  providerConfigRef:
+    name: account-provider-config
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: cls-entitlement-2
+  namespace: default
+spec:
+  forProvider:
+    serviceName: cloud-logging
+    servicePlanName: standard
+    amount: 1
+    subaccountRef:
+      name: co-mirza-sa-test
+  providerConfigRef:
+    name: account-provider-config
+---
+#apiVersion: account.btp.sap.crossplane.io/v1alpha1
+#kind: Entitlement
+#metadata:
+#  name: test-123455-cis-entitlement2
+#  namespace: default
+#spec:
+#  forProvider:
+#    serviceName: "cis"
+#    servicePlanName: "local"
+#  SubaccountRef:
+#    name: test-123455

@@ -1,0 +1,182 @@
+[
+  {
+    "op": "replace",
+    "path": "/components/schemas/DirectoryResponseObject/properties/createdDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/DirectoryResponseObject/properties/createdDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/DirectoryResponseObject/properties/modifiedDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/DirectoryResponseObject/properties/modifiedDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/DirectoryResponseObject/properties/modifiedDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/DirectoryResponseObject/properties/modifiedDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/createdDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/createdDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/expiryDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/expiryDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/modifiedDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/modifiedDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/renewalDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/GlobalAccountResponseObject/properties/renewalDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/SubaccountResponseObject/properties/createdDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/SubaccountResponseObject/properties/createdDate/format",
+    "value": "int64"
+  },
+
+  {
+    "op": "replace",
+    "path": "/components/schemas/SubaccountResponseObject/properties/modifiedDate/type",
+    "value": "integer"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/SubaccountResponseObject/properties/modifiedDate/format",
+    "value": "int64"
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/CreateDirectoryRequestPayload/properties/directoryFeatures",
+    "value": {
+      "type": "array",
+      "description": "<b>The features to be enabled in the directory. The available features are:</b>\n-\t<b>DEFAULT</b>: (Mandatory) All directories provide the following basic features: (1) Group and filter subaccounts for reports and filters, (2) monitor usage and costs on a directory level (costs only available for contracts that use the consumption-based commercial model), and (3) set custom properties and tags to the directory for identification and reporting purposes.\n-\t<b>ENTITLEMENTS</b>: (Optional) Enables the assignment of a quota for services and applications to the directory from the global account quota for distribution to the subaccounts under this directory. \n-\t<b>AUTHORIZATIONS</b>: (Optional) Allows you to assign users as administrators or viewers of this directory. You must apply this feature in combination with the ENTITLEMENTS feature.\n\n\nIMPORTANT: Your multi-level account hierarchy can have more than one directory enabled with user authorization and/or entitlement management; however, only one directory in any directory path can have these features enabled. In other words, other directories above or below this directory in the same path can only have the default features specified. If you are not sure which features to enable, we recommend that you set only the default features, and then add features later on as they are needed. \n<br/><b>Valid values:</b> \n[DEFAULT]\n[DEFAULT,ENTITLEMENTS]\n[DEFAULT,ENTITLEMENTS,AUTHORIZATIONS]<br/>",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DEFAULT",
+          "ENTITLEMENTS",
+          "AUTHORIZATIONS"
+        ]
+      }
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/DirectoryResponseObject/properties/directoryFeatures",
+    "value": {
+      "type": "array",
+      "description": "<b>The features to be enabled in the directory. The available features are:</b>\n-\t<b>DEFAULT</b>: (Mandatory) All directories provide the following basic features: (1) Group and filter subaccounts for reports and filters, (2) monitor usage and costs on a directory level (costs only available for contracts that use the consumption-based commercial model), and (3) set custom properties and tags to the directory for identification and reporting purposes.\n-\t<b>ENTITLEMENTS</b>: (Optional) Enables the assignment of a quota for services and applications to the directory from the global account quota for distribution to the subaccounts under this directory. \n-\t<b>AUTHORIZATIONS</b>: (Optional) Allows you to assign users as administrators or viewers of this directory. You must apply this feature in combination with the ENTITLEMENTS feature.\n\n\nIMPORTANT: Your multi-level account hierarchy can have more than one directory enabled with user authorization and/or entitlement management; however, only one directory in any directory path can have these features enabled. In other words, other directories above or below this directory in the same path can only have the default features specified. If you are not sure which features to enable, we recommend that you set only the default features, and then add features later on as they are needed. \n<br/><b>Valid values:</b> \n[DEFAULT]\n[DEFAULT,ENTITLEMENTS]\n[DEFAULT,ENTITLEMENTS,AUTHORIZATIONS]<br/>",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DEFAULT",
+          "ENTITLEMENTS",
+          "AUTHORIZATIONS"
+        ]
+      }
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/UpdateDirectoryTypeRequestPayload/properties/directoryFeatures",
+    "value": {
+      "type": "array",
+      "description": "<b>The features to be enabled in the directory. The available features are:</b>\n-\t<b>DEFAULT</b>: (Mandatory) All directories provide the following basic features: (1) Group and filter subaccounts for reports and filters, (2) monitor usage and costs on a directory level (costs only available for contracts that use the consumption-based commercial model), and (3) set custom properties and tags to the directory for identification and reporting purposes.\n-\t<b>ENTITLEMENTS</b>: (Optional) Enables the assignment of a quota for services and applications to the directory from the global account quota for distribution to the subaccounts under this directory. \n-\t<b>AUTHORIZATIONS</b>: (Optional) Allows you to assign users as administrators or viewers of this directory. You must apply this feature in combination with the ENTITLEMENTS feature.\n\n\nIMPORTANT: Your multi-level account hierarchy can have more than one directory enabled with user authorization and/or entitlement management; however, only one directory in any directory path can have these features enabled. In other words, other directories above or below this directory in the same path can only have the default features specified. If you are not sure which features to enable, we recommend that you set only the default features, and then add features later on as they are needed. \n<br/><b>Valid values:</b> \n[DEFAULT]\n[DEFAULT,ENTITLEMENTS]\n[DEFAULT,ENTITLEMENTS,AUTHORIZATIONS]<br/>",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DEFAULT",
+          "ENTITLEMENTS",
+          "AUTHORIZATIONS"
+        ]
+      }
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/components/schemas/ApiExceptionResponseObject",
+    "value": {
+      "type": "object",
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "object",
+          "description": "List of assigned entitlements and their specifications.",
+          "properties": {
+            "code": {
+              "type": "number",
+              "description": "the error code."
+            },
+            "message": {
+              "type": "string",
+              "description": "error message helping to resolve the issue"
+            },
+            "target": {
+              "type": "string",
+              "description": "The susppect."
+            },
+            "correlationID": {
+              "type": "string",
+              "description": "in case of incident, please report this correlation id."
+            }
+          }
+        }
+      }
+    }
+  }
+]

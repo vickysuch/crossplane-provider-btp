@@ -1,0 +1,11 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Subscription
+metadata:
+  namespace: default
+  name: subscription-example
+spec:
+  forProvider:
+    appName: sapappstudio
+    planName: standard-edition
+  cloudManagementRef:
+    name: cis-local

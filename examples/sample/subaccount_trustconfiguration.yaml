@@ -1,0 +1,12 @@
+apiVersion: security.btp.sap.crossplane.io/v1alpha1
+kind: SubaccountTrustConfiguration
+metadata:
+  name: meta-trustconfiguration
+spec:
+  forProvider:
+    name: simple-trust
+    description: "my-descriptions"
+    subaccountRef:
+      name: stephan-trust-test
+    identityProvider: "aedxvzfuh.accounts400.ondemand.com"
+

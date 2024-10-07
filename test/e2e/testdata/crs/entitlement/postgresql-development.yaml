@@ -1,0 +1,30 @@
+# Test Case for having multiple entitlements with same kind and service and different amounts
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: postgres-development
+  namespace: default
+spec:
+  forProvider:
+    serviceName: postgresql-db
+    servicePlanName: development
+    amount: 1
+    subaccountRef:
+      name: entitlement-sa-test
+  providerConfigRef:
+    name: default
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: postgres-development2
+  namespace: default
+spec:
+  forProvider:
+    serviceName: postgresql-db
+    servicePlanName: development
+    amount: 1
+    subaccountRef:
+      name: entitlement-sa-test
+  providerConfigRef:
+    name: default

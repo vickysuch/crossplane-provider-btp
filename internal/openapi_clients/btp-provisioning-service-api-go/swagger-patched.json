@@ -1,0 +1,1652 @@
+{
+  "components": {
+    "schemas": {
+      "AbstractDTO": {
+        "type": "object"
+      },
+      "ApiExceptionResponseObject": {
+        "properties": {
+          "error": {
+            "properties": {
+              "code": {
+                "description": "Technical code of the error as a reference for support",
+                "format": "int32",
+                "type": "integer"
+              },
+              "correlationID": {
+                "description": "Log correlation ID to track the event",
+                "type": "string"
+              },
+              "description": {
+                "$ref": "#/components/schemas/JsonNode"
+              },
+              "details": {
+                "description": "Nesting of error responses",
+                "items": {
+                  "$ref": "#/components/schemas/NestingErrorDetailsResponseObject"
+                },
+                "type": "array"
+              },
+              "message": {
+                "description": "User-friendly description of the error.",
+                "type": "string"
+              },
+              "target": {
+                "description": "Describes a data element (for example, a resource path: /online-store/v1/products/123)",
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "correlationID",
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "AvailableEnvironmentResponseCollection": {
+        "properties": {
+          "availableEnvironments": {
+            "items": {
+              "$ref": "#/components/schemas/AvailableEnvironmentResponseObject"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "AvailableEnvironmentResponseObject": {
+        "properties": {
+          "allowAdditionalEnvironmentInstance": {
+            "description": "Whether the user can use this broker for creating a second CF environment",
+            "type": "boolean"
+          },
+          "availabilityLevel": {
+            "description": "The availability level of the environment broker.",
+            "type": "string"
+          },
+          "createSchema": {
+            "description": "The create schema of the environment broker.",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of the service plan for the available environment.",
+            "type": "string"
+          },
+          "environmentType": {
+            "description": "The type of environment that is available (for example: cloudfoundry).",
+            "type": "string"
+          },
+          "landscapeLabel": {
+            "description": "The landscape label of the environment broker.",
+            "type": "string"
+          },
+          "planName": {
+            "description": "Name of the service plan for the available environment.",
+            "type": "string"
+          },
+          "planUpdatable": {
+            "description": "Specifies if the consumer can change the plan of an existing instance of the environment.",
+            "type": "boolean"
+          },
+          "serviceDescription": {
+            "description": "The short description of the service.",
+            "type": "string"
+          },
+          "serviceDisplayName": {
+            "description": "The display name of the service.",
+            "type": "string"
+          },
+          "serviceDocumentationUrl": {
+            "description": "The URL of the documentation link for the service.",
+            "type": "string"
+          },
+          "serviceImageUrl": {
+            "description": "The URL of the image for the service.",
+            "type": "string"
+          },
+          "serviceLongDescription": {
+            "description": "The long description of the service.",
+            "type": "string"
+          },
+          "serviceName": {
+            "description": "Name of the service offered in the catalog of the corresponding environment broker (for example, cloudfoundry).",
+            "type": "string"
+          },
+          "serviceSupportUrl": {
+            "description": "The URL of the support link for the service.",
+            "type": "string"
+          },
+          "technicalKey": {
+            "description": "Technical key of the corresponding environment broker.",
+            "type": "string"
+          },
+          "updateSchema": {
+            "description": "The update schema of the environment broker.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateEnvironmentInstanceRequestPayload": {
+        "description": "JSON object with configuration parameters specific to environment instance.",
+        "properties": {
+          "description": {
+            "description": "The description of the environment instance.",
+            "type": "string"
+          },
+          "environmentType": {
+            "description": "Type of the environment instance that is used. Must match the type of the environment instance broker (for example: cloudfoundry). Use GET /provisioning/v1/availableEnvironments to view the valid values.",
+            "type": "string"
+          },
+          "landscapeLabel": {
+            "description": "The name of the landscape within the logged-in region on which to create the environment instance. Only required only if the region has multiple landscapes. To see which landscapes are available for this environment, use the GET /provisioning/v1/availableEnvironments API.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the created environment instance.",
+            "type": "string"
+          },
+          "origin": {
+            "description": "The origin of the user in case of a custom IdP configuration. This parameter is only required if the OAuth 2.0 client credentials grant flow is used, a user parameter is provided and the target environment supports custom IdP, otherwise it is ignored.",
+            "type": "string"
+          },
+          "parameters": {
+            "description": "If needed, you can pass environment-specific configuration parameters using a valid embedded JSON object.\nFor a list of supported configuration parameters, see the documentation of the particular environment offering.\nIn this example, additional configuration parameters 'id' and 'email' are specified: \n{ \n\"instance_name\": \"myOrg\" \n} ",
+            "type": "object"
+          },
+          "planName": {
+            "description": "Name of the service plan for the environment instance. Must match the name in the corresponding service broker's catalog. (for example: standard)",
+            "type": "string"
+          },
+          "serviceName": {
+            "description": "The name of service offered in the catalog of the corresponding environment broker. (for example: cloudfoundry)",
+            "type": "string"
+          },
+          "technicalKey": {
+            "description": "Technical key of the corresponding environment broker.",
+            "type": "string"
+          },
+          "user": {
+            "description": "The e-mail of the user that owns the environment instance. In some environments, this user might be assigned as the initial admin of the provisioned environment. For example, for a Cloud Foundry environment, this user is assigned to the Org Manager role. This parameter is required only when OAuth 2.0 client credentials grant flow is used, otherwise it is ignored.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "environmentType",
+          "planName",
+          "serviceName"
+        ],
+        "type": "object"
+      },
+      "CreatedEnvironmentInstanceResponseObject": {
+        "properties": {
+          "id": {
+            "description": "ID of the created environment instance",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnvironmentInstanceResponseObject": {
+        "properties": {
+          "brokerId": {
+            "description": "The ID of the associated environment broker.",
+            "type": "string"
+          },
+          "commercialType": {
+            "description": "The commercial type of the environment broker.",
+            "type": "string"
+          },
+          "createdDate": {
+            "description": "The date the environment instance was created. Dates and times are in UTC format.",
+            "format": "date-time",
+            "type": "number"
+          },
+          "customLabels": {
+            "additionalProperties": {
+              "description": "Custom labels that are defined by a user and assigned as key-value pairs in a JSON array to the environment instance. \nExample:\n{\n  \"Cost Center\": [\"19700626\"],\n  \"Department\": [\"Sales\"],\n  \"Contacts\": [\"name1@example.com\",\"name2@example.com\"],\n  \"EMEA\":[]\n}\nNOTE: Custom labels apply only to SAP BTP. They are not the same labels that might be defined by your environment broker (see \"labels\" field).",
+              "items": {
+                "description": "Custom labels that are defined by a user and assigned as key-value pairs in a JSON array to the environment instance. \nExample:\n{\n  \"Cost Center\": [\"19700626\"],\n  \"Department\": [\"Sales\"],\n  \"Contacts\": [\"name1@example.com\",\"name2@example.com\"],\n  \"EMEA\":[]\n}\nNOTE: Custom labels apply only to SAP BTP. They are not the same labels that might be defined by your environment broker (see \"labels\" field).",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "description": "Custom labels that are defined by a user and assigned as key-value pairs in a JSON array to the environment instance. \nExample:\n{\n  \"Cost Center\": [\"19700626\"],\n  \"Department\": [\"Sales\"],\n  \"Contacts\": [\"name1@example.com\",\"name2@example.com\"],\n  \"EMEA\":[]\n}\nNOTE: Custom labels apply only to SAP BTP. They are not the same labels that might be defined by your environment broker (see \"labels\" field).",
+            "type": "object"
+          },
+          "dashboardUrl": {
+            "description": "The URL of the service dashboard, which is a web-based management user interface for the service instances.",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description of the environment instance.",
+            "type": "string"
+          },
+          "environmentType": {
+            "description": "Type of the environment instance that is used.",
+            "enum": [
+              "cloudfoundry, kubernetes, neo"
+            ],
+            "example": "cloudfoundry",
+            "type": "string"
+          },
+          "globalAccountGUID": {
+            "description": "The GUID of the global account that is associated with the environment instance.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Automatically generated unique identifier for the environment instance.",
+            "type": "string"
+          },
+          "labels": {
+            "description": "Broker-specified key-value pairs that specify attributes of an environment instance.",
+            "type": "string"
+          },
+          "landscapeLabel": {
+            "description": "The name of the landscape within the logged-in region on which the environment instance is created.",
+            "type": "string"
+          },
+          "modifiedDate": {
+            "description": "The last date the environment instance was last modified. Dates and times are in UTC format.",
+            "format": "date-time",
+            "type": "number"
+          },
+          "name": {
+            "description": "Name of the environment instance.",
+            "type": "string"
+          },
+          "operation": {
+            "description": "An identifier that represents the last operation. This ID is returned by the environment brokers.",
+            "type": "string"
+          },
+          "parameters": {
+            "description": "Configuration parameters for the environment instance.",
+            "type": "string"
+          },
+          "planId": {
+            "description": "ID of the service plan for the environment instance in the corresponding service broker's catalog.",
+            "type": "string"
+          },
+          "planName": {
+            "description": "Name of the service plan for the environment instance in the corresponding service broker's catalog.",
+            "type": "string"
+          },
+          "platformId": {
+            "description": "ID of the platform for the environment instance in the corresponding service broker's catalog.",
+            "type": "string"
+          },
+          "serviceId": {
+            "description": "ID of the service for the environment instance in the corresponding service broker's catalog.",
+            "type": "string"
+          },
+          "serviceName": {
+            "description": "Name of the service for the environment instance in the corresponding service broker's catalog.",
+            "type": "string"
+          },
+          "state": {
+            "description": "Current state of the environment instance.",
+            "enum": [
+              "STARTED",
+              "CREATING",
+              "UPDATING",
+              "MOVING",
+              "MOVING_TO_OTHER_GA",
+              "PROCESSING",
+              "DELETING",
+              "OK",
+              "PENDING_REVIEW",
+              "CANCELED",
+              "CREATION_FAILED",
+              "UPDATE_FAILED",
+              "SUSPENSION_FAILED",
+              "UPDATE_ACCOUNT_TYPE_FAILED",
+              "UPDATE_DIRECTORY_TYPE_FAILED",
+              "PROCESSING_FAILED",
+              "DELETION_FAILED",
+              "MOVE_FAILED",
+              "MOVE_TO_OTHER_GA_FAILED",
+              "MIGRATING",
+              "MIGRATION_FAILED",
+              "ROLLBACK_MIGRATION_PROCESSING",
+              "MIGRATED",
+              "CREATING, UPDATING, DELETING, OK, CREATION_FAILED, DELETION_FAILED, UPDATE_FAILED"
+            ],
+            "example": "cloudfoundry",
+            "type": "string"
+          },
+          "stateMessage": {
+            "description": "Information about the current state of the environment instance.",
+            "type": "string"
+          },
+          "subaccountGUID": {
+            "description": "The GUID of the subaccount associated with the environment instance.",
+            "type": "string"
+          },
+          "tenantId": {
+            "description": "The ID of the tenant that owns the environment instance.",
+            "type": "string"
+          },
+          "type": {
+            "description": "The last provisioning operation on the environment instance.\n* <b>Provision:</b> Environment instance created.\n* <b>Update:</b> Environment instance changed.\n* <b>Deprovision:</b> Environment instance deleted.",
+            "enum": [
+              "Provision",
+              "Update",
+              "Deprovision",
+              "Provision, Update, Deprovision"
+            ],
+            "example": "Provision",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnvironmentInstancesResponseCollection": {
+        "properties": {
+          "environmentInstances": {
+            "description": "List of all the environment instances",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentInstanceResponseObject"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "JsonNode": {
+        "description": "Error description in JSON format",
+        "type": "object"
+      },
+      "LabelAssignmentRequestPayload": {
+        "description": "JSON object with labels as key-value pairs that specify custom attributes of the entity.",
+        "properties": {
+          "labels": {
+            "additionalProperties": {
+              "description": "Labels as key-value pairs in JSON format. An entity is allowed up to 10 labels. The key of each label is mandatory and is limited to 63 characters. Standard labels can have any name (key) that you define, with only a single optional value assigned per key. To define a special type of label, called tags, specify the key with the name 'tags' and associate up to 10 values per tag in the array. The key 'tags' (in any casing variation) can only be used once per entity. Note that label values (not keys) are case-sensitive -- be careful not to create duplicate variants of the same value with a different casing (example: \"myValue\" and \"MyValue\").\nFor example: {\n\"Cost Center\":\"2624061970\"\n\"Department\":\"Sales\"\n\"tags\": [\"Green\", \"Pharma\", \"Audited\"]\n}",
+              "items": {
+                "description": "Labels as key-value pairs in JSON format. An entity is allowed up to 10 labels. The key of each label is mandatory and is limited to 63 characters. Standard labels can have any name (key) that you define, with only a single optional value assigned per key. To define a special type of label, called tags, specify the key with the name 'tags' and associate up to 10 values per tag in the array. The key 'tags' (in any casing variation) can only be used once per entity. Note that label values (not keys) are case-sensitive -- be careful not to create duplicate variants of the same value with a different casing (example: \"myValue\" and \"MyValue\").\nFor example: {\n\"Cost Center\":\"2624061970\"\n\"Department\":\"Sales\"\n\"tags\": [\"Green\", \"Pharma\", \"Audited\"]\n}",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "description": "Labels as key-value pairs in JSON format. An entity is allowed up to 10 labels. The key of each label is mandatory and is limited to 63 characters. Standard labels can have any name (key) that you define, with only a single optional value assigned per key. To define a special type of label, called tags, specify the key with the name 'tags' and associate up to 10 values per tag in the array. The key 'tags' (in any casing variation) can only be used once per entity. Note that label values (not keys) are case-sensitive -- be careful not to create duplicate variants of the same value with a different casing (example: \"myValue\" and \"MyValue\").\nFor example: {\n\"Cost Center\":\"2624061970\"\n\"Department\":\"Sales\"\n\"tags\": [\"Green\", \"Pharma\", \"Audited\"]\n}",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "LabelsResponseObject": {
+        "description": "Labels assigned as key-value pairs to the entity.",
+        "properties": {
+          "labels": {
+            "additionalProperties": {
+              "description": "User-defined labels that are assigned as key-value pairs in a JSON array to the entity.\n\nExample: {\n   \"Cost Center\": [\"19700626\"],\n   \"Department\": [\"Sales\"],\n   \"Contacts\": [\"name1@example.com\",\"name2@example.com\"],\n   \"EMEA\":[]\n}",
+              "items": {
+                "description": "User-defined labels that are assigned as key-value pairs in a JSON array to the entity.\n\nExample: {\n   \"Cost Center\": [\"19700626\"],\n   \"Department\": [\"Sales\"],\n   \"Contacts\": [\"name1@example.com\",\"name2@example.com\"],\n   \"EMEA\":[]\n}",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "description": "User-defined labels that are assigned as key-value pairs in a JSON array to the entity.\n\nExample: {\n   \"Cost Center\": [\"19700626\"],\n   \"Department\": [\"Sales\"],\n   \"Contacts\": [\"name1@example.com\",\"name2@example.com\"],\n   \"EMEA\":[]\n}",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "NestingErrorDetailsResponseObject": {
+        "description": "Nesting of error responses",
+        "properties": {
+          "code": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "QuotaResourcesResponseObject": {
+        "properties": {
+          "additionalInfo": {
+            "additionalProperties": {
+              "description": "any relevant information about the resource that is not provided by other parameter values.",
+              "type": "object"
+            },
+            "description": "any relevant information about the resource that is not provided by other parameter values.",
+            "type": "object"
+          },
+          "description": {
+            "description": "Description of the resource.",
+            "type": "string"
+          },
+          "displayName": {
+            "description": "Descriptive name of the resource for customer-facing UIs.",
+            "type": "string"
+          },
+          "resourceData": {
+            "additionalProperties": {
+              "description": "Data associated with the resource.",
+              "type": "object"
+            },
+            "description": "Data associated with the resource.",
+            "type": "object"
+          },
+          "resourceProvider": {
+            "description": "Provider of the requested resource. For example, IaaS provider: AWS.",
+            "type": "string"
+          },
+          "resourceTechnicalName": {
+            "description": "Unique technical name of the resource.",
+            "type": "string"
+          },
+          "resourceType": {
+            "description": "Type of the resource.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ServicePlanAssignmentsResponseCollection": {
+        "properties": {
+          "quotas": {
+            "items": {
+              "$ref": "#/components/schemas/ServicePlanAssignmentsResponseObject"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ServicePlanAssignmentsResponseObject": {
+        "properties": {
+          "consumedQuota": {
+            "description": "The quantity of consumed quota. The service owner can provide a value for the consumed quota if it is different from the provisioned quota calculation.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "globalAccountGUID": {
+            "description": "Unique ID of the global account associated with the subaccount.",
+            "type": "string"
+          },
+          "globalAccountId": {
+            "description": "The ID of the associated global account.",
+            "type": "string"
+          },
+          "plan": {
+            "description": "The name of the plan of the provisioned quota.",
+            "type": "string"
+          },
+          "provisioningMethod": {
+            "enum": [
+              "SERVICE_BROKER",
+              "NONE_REQUIRED",
+              "COMMERCIAL_SOLUTION_SCRIPT",
+              "GLOBAL_COMMERCIAL_SOLUTION_SCRIPT",
+              "GLOBAL_QUOTA_DOMAIN_DB",
+              "CLOUD_AUTOMATION",
+              "SPC"
+            ],
+            "type": "string"
+          },
+          "quota": {
+            "description": "The quantity of provisioned quota.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/QuotaResourcesResponseObject"
+            },
+            "type": "array"
+          },
+          "service": {
+            "description": "The name of the service of the provisioned quota.",
+            "type": "string"
+          },
+          "serviceCategory": {
+            "enum": [
+              "PLATFORM",
+              "SERVICE",
+              "ELASTIC_SERVICE",
+              "ELASTIC_LIMITED",
+              "APPLICATION",
+              "QUOTA_BASED_APPLICATION",
+              "ENVIRONMENT"
+            ],
+            "type": "string"
+          },
+          "subaccountGUID": {
+            "description": "Unique ID of the subaccount for which to get quota.",
+            "type": "string"
+          },
+          "tenantId": {
+            "description": "The ID of the tenant for the subaccount.",
+            "type": "string"
+          },
+          "uniqueIdentifier": {
+            "description": "The unique identifier of the plan of the provisioned quota.",
+            "type": "string"
+          },
+          "unlimited": {
+            "description": "Whether an unlimited quantity of quota can be provisioned.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateEnvironmentInstanceRequestPayload": {
+        "description": "JSON object with configuration parameters specific to environment instance.",
+        "properties": {
+          "parameters": {
+            "description": "If needed, you can pass environment-specific configuration parameters using a valid embedded JSON object.\nFor a list of supported configuration parameters, see the documentation of the particular environment offering.\nIn this example, additional configuration parameter 'instance_name' is specified: \n{ \n\"instance_name\": \"myOrg\" \n} ",
+            "type": "object"
+          },
+          "planName": {
+            "description": "Name of the service plan for the environment instance. Must match the name in the corresponding service broker's catalog. (for example: Subscription)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "planName"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2": {
+        "flows": {
+          "clientCredentials": {
+            "scopes": {},
+            "tokenUrl": "https://{identityzone}.authentication.eu10.hana.ondemand.com/oauth/token"
+          },
+          "password": {
+            "scopes": {},
+            "tokenUrl": "https://{identityzone}.authentication.eu10.hana.ondemand.com/oauth/token"
+          }
+        },
+        "type": "oauth2"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Account Administration Using APIs of the SAP Cloud Management Service",
+    "url": "https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/17b6a171552544a6804f12ea83112a3f.html"
+  },
+  "info": {
+    "description": "The Provisioning service provides REST APIs that are responsible for the provisioning and deprovisioning of environment instances and tenants in the corresponding region. \nProvisioning is performed after validation by the Entitlements service. Use the APIs in this service to manage and create environment instances, such as a Cloud Foundry org, in a subaccount and to retrieve the plans and quota assignments for a subaccount. \nNOTE: These APIs are relevant only for cloud management tools feature set B. For details and information about whether this applies to your global account, see [Cloud Management Tools - Feature Set Overview](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/caf4e4e23aef4666ad8f125af393dfb2.html).\n\nSee also:\n* [Authorization](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/latest/en-US/3670474a58c24ac2b082e76cbbd9dc19.html)\n* [Rate Limiting](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/latest/en-US/77b217b3f57a45b987eb7fbc3305ce1e.html)\n* [Error Response Format](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/latest/en-US/77fef2fb104b4b1795e2e6cee790e8b8.html)\n* [Asynchronous Jobs](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/latest/en-US/0a0a6ab0ad114d72a6611c1c6b21683e.html)",
+    "termsOfService": "http://www.sap.com",
+    "title": "Provisioning Service",
+    "version": "1.0"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/jobs-management/v1/jobs/{jobInstanceIdOrUniqueId}/status": {
+      "get": {
+        "description": "Get information for a specified job, including its ID and its current status.<br/><br/>Required scope: $XSAPPNAME.job.read",
+        "operationId": "getStatus",
+        "parameters": [
+          {
+            "description": "ID of the job for which to get status",
+            "in": "path",
+            "name": "jobInstanceIdOrUniqueId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Ok"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get job status",
+        "tags": [
+          "Job Management"
+        ]
+      }
+    },
+    "/provisioning/v1/availableEnvironments": {
+      "get": {
+        "description": "Get all the available environments for a specified subaccount.<br/>This includes the environments, such as Cloud Foundry, which are available by default to all subaccounts, and those restricted environments, such as Kyma, which are offered in the product catalog as service entitlements and whose plans have been assigned by a global account admin to the subaccount.<br/><br/>Required scope: $XSAPPNAME.subaccount.environment.read ",
+        "operationId": "getAvailableEnvironments",
+        "parameters": [
+          {
+            "description": "Access token to work with this API group.",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Security token that contains authentication declarations of an end user by the authorization server (SAP Identity and Authentication Service).",
+            "in": "header",
+            "name": "X-ID-Token",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailableEnvironmentResponseCollection"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Tenant Not Found"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get available environments",
+        "tags": [
+          "Environments"
+        ]
+      }
+    },
+    "/provisioning/v1/environments": {
+      "delete": {
+        "description": "Delete all environment instances, including their data in the environment relating to the subaccount. \nThe deletion may take a while depending on the amount of content in your environment instance.<br/><br/>Required scope: $XSAPPNAME.subaccount.environment.delete",
+        "operationId": "deleteEnvironmentInstances",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentInstancesResponseCollection"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete all environment instances",
+        "tags": [
+          "Environments"
+        ]
+      },
+      "get": {
+        "description": "Get all environment instances of a subaccount.<br/><br/>Required scope: $XSAPPNAME.subaccount.environment.read",
+        "operationId": "getEnvironmentInstances",
+        "parameters": [
+          {
+            "description": "Access token to work with this API group.",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Security token that contains authentication declarations of an end user by the authorization server (SAP Identity and Authentication Service).",
+            "in": "header",
+            "name": "X-ID-Token",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentInstancesResponseCollection"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "User is unauthorized for this operation"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Subaccount does not exist"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get environment instances",
+        "tags": [
+          "Environments"
+        ]
+      },
+      "post": {
+        "description": "Create an environment instance, such as a Cloud Foundry org, in a subaccount.<br/>To see which environments are available to the subaccount, use the API:  GET /provisioning/v1/availableEnvironments<br/><br/>Required scope: $XSAPPNAME.subaccount.environment.create",
+        "operationId": "createEnvironmentInstance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEnvironmentInstanceRequestPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedEnvironmentInstanceResponseObject"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Broker was not found"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Tenant does not exist"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Create an environment instance",
+        "tags": [
+          "Environments"
+        ]
+      }
+    },
+    "/provisioning/v1/environments/{environmentInstanceId}": {
+      "delete": {
+        "description": "Delete a specific environment instance, including all its data in the environment relating to the subaccount. \nThe deletion may take a while depending on the amount of content in your environment instance.<br/><br/>Required scope: $XSAPPNAME.subaccount.environment.delete",
+        "operationId": "deleteEnvironmentInstance",
+        "parameters": [
+          {
+            "description": "ID of the environment instance to delete",
+            "in": "path",
+            "name": "environmentInstanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentInstanceResponseObject"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "No environment instance found for the specified environmentInstanceId"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete an environment instance",
+        "tags": [
+          "Environments"
+        ]
+      },
+      "get": {
+        "description": "Get the details of a specific environment instance in a subaccount.<br/><br/>Required scope: $XSAPPNAME.subaccount.environment.read",
+        "operationId": "getEnvironmentInstance",
+        "parameters": [
+          {
+            "description": "The ID of the environment instance to view.",
+            "in": "path",
+            "name": "environmentInstanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentInstanceResponseObject"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "No environment instance found for the specified environmentInstanceId"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get an environment instance",
+        "tags": [
+          "Environments"
+        ]
+      },
+      "patch": {
+        "description": "Update an environment instance.<br/>To see which environments are provisioned for the subaccount, use the API:  GET /provisioning/v1/environments<br/><br/>Required scope: $XSAPPNAME.subaccount.environment.delete",
+        "operationId": "updateEnvironmentInstance",
+        "parameters": [
+          {
+            "description": "ID of the environment instance to update",
+            "in": "path",
+            "name": "environmentInstanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvironmentInstanceRequestPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbstractDTO"
+                }
+              }
+            },
+            "description": "Accepted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Parameters don't match the broker update schema definition"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Tenant does not exist"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update an environment instance",
+        "tags": [
+          "Environments"
+        ]
+      }
+    },
+    "/provisioning/v1/environments/{environmentInstanceId}/labels": {
+      "delete": {
+        "description": "Remove all user-defined labels that are assigned to a given environment instance. \n\nTo remove specific labels, use instead: PUT /provisioning/v1/environments/{environmentInstanceId}/labels\n\nNOTE: This API applies only to custom labels that are defined by users for SAP BTP. Any labels that might be defined by your environment broker are not removed by this API.\n\nRequired scope: $XSAPPNAME.subaccount.environment.delete",
+        "operationId": "deleteEnvironmentInstanceLabels",
+        "parameters": [
+          {
+            "description": "The ID of the environment instance.",
+            "in": "path",
+            "name": "environmentInstanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelsResponseObject"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "No environment instance found for the specified environmentInstanceId"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Remove all labels from an environment instance",
+        "tags": [
+          "Environments"
+        ]
+      },
+      "get": {
+        "description": "Get all the custom labels that are assigned as key-value pairs to a given environment instance. \n\nNOTE: These custom labels are user-defined and apply only to SAP BTP. They are not the same labels that might be defined by your environment broker; this API does not retrieve the broker-defined labels that may exist. \n\nRequired scope: $XSAPPNAME.subaccount.environment.read",
+        "operationId": "getEnvironmentInstanceLabels",
+        "parameters": [
+          {
+            "description": "The ID of the environment instance.",
+            "in": "path",
+            "name": "environmentInstanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelsResponseObject"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "No environment instance found for the specified environmentInstanceId"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get labels for an environment instance",
+        "tags": [
+          "Environments"
+        ]
+      },
+      "put": {
+        "description": "Create and assign custom labels to a given environment instance. Labels are specified as key-value pairs. \n\nNOTE: These custom labels are user-defined and apply only to SAP BTP. They are not the same labels that might be defined by your environment broker; this API does not update broker-defined labels that may exist. \n\nRequired scope: $XSAPPNAME.subaccount.environment.create",
+        "operationId": "createEnvironmentInstanceLabels",
+        "parameters": [
+          {
+            "description": "The ID of the environment instance.",
+            "in": "path",
+            "name": "environmentInstanceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelAssignmentRequestPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabelsResponseObject"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "No environment instance found for the specified environmentInstanceId"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Assign labels to an environment instance",
+        "tags": [
+          "Environments"
+        ]
+      }
+    },
+    "/provisioning/v1/servicePlanAssignments": {
+      "get": {
+        "description": "Get the plans and quota assignments for a subaccount.<br/><br/>Required scope: $XSAPPNAME.subaccount.entitlement.read",
+        "operationId": "getSubaccountQuota",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicePlanAssignmentsResponseCollection"
+                }
+              }
+            },
+            "description": "Ok"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Not Authorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Subaccount or tenant does not exist"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "headers": {
+              "X-Ratelimit-Reset": {
+                "description": "The time at which the rate limit will reset, expressed in milliseconds. It indicates the timestamp when the client can make additional requests without exceeding the rate limit.",
+                "example": "167918400000",
+                "schema": {
+                  "format": "long",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionResponseObject"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get subaccount quota assignments",
+        "tags": [
+          "Quota Assignments"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "OAuth2": []
+    }
+  ],
+  "servers": [
+    {
+      "description": "Generated server url",
+      "url": "https://provisioning-service.cfapps.eu10.hana.ondemand.com"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Environments",
+      "name": "Environments"
+    },
+    {
+      "description": "Job Management",
+      "name": "Job Management"
+    },
+    {
+      "description": "Quota Assignments",
+      "name": "Quota Assignments"
+    }
+  ],
+  "x-sap-shortText": "Manage the provisioning of environment instances and tenants.",
+  "x-sap-stateInfo": {
+    "state": "Active"
+  },
+  "x-servers": [
+    {
+      "templates": {
+        "landscape": {
+          "default": "eu10",
+          "enum": [
+            "eu10",
+            "us10",
+            "ap21"
+          ]
+        }
+      },
+      "url": "https://provisioning-service.cfapps.{landscape}.hana.ondemand.com"
+    }
+  ]
+}

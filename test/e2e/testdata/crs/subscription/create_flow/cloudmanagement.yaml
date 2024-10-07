@@ -1,0 +1,14 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: CloudManagement
+metadata:
+  name: e2e-sub-cis-local
+  namespace: default
+spec:
+  writeConnectionSecretToRef:
+    name: e2e-sub-cis-local
+    namespace: default
+  forProvider:
+    serviceManagerRef:
+      name: e2e-sm-sub
+    subaccountRef:
+      name: sub-sa-test

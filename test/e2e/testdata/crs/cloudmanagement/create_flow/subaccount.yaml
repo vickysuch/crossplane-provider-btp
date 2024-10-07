@@ -1,0 +1,15 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Subaccount
+metadata:
+  namespace: default
+  name: cis-sa-test
+spec:
+  forProvider:
+    displayName: $BUILD_ID-e2e-test-sa-cis
+    region: eu12
+    subdomain: $BUILD_ID-e2e-test-sa-cis-sub
+    labels:
+      safe-to-delete: [ "yes" ]
+      BUILD_ID: [ "$BUILD_ID" ]
+    subaccountAdmins:
+      - $TECHNICAL_USER_EMAIL

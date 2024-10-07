@@ -1,0 +1,12 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Subaccount
+metadata:
+  namespace: default
+  name: test-12345
+spec:
+  forProvider:
+    displayName: test-12345
+    region: eu12
+    subdomain: test-1234q342645asd
+    subaccountAdmins:
+      - <EMAIL>

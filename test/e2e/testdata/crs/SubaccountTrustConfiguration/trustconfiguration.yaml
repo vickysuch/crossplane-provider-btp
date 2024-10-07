@@ -1,0 +1,12 @@
+apiVersion: security.btp.sap.crossplane.io/v1alpha1
+kind: SubaccountTrustConfiguration
+metadata:
+  name: e2e-trustconfiguration
+spec:
+  forProvider:
+    name: $BUILD_ID-e2e-simple-trust
+    description: "my-descriptions"
+    subaccountRef:
+      name: sub-trust-test
+    identityProvider: "$IDP_URL"
+

@@ -1,0 +1,107 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: GlobalAccount
+metadata:
+  annotations:
+    crossplane.io/external-name: SAP Cloud Orchestration Canary
+  name: co-ga-canary
+spec:
+  providerConfigRef:
+    name: default
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Subaccount
+metadata:
+  namespace: default
+  name: kyma-test
+spec:
+  forProvider:
+    globalAccountRef:
+      name: co-ga-canary
+    displayName: kyma-test
+    region: eu12
+    subdomain: test-1234q342645asd
+    subaccountAdmins:
+      - <EMAIL>
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: ServiceManager
+metadata:
+  name: servicemanager-test
+  namespace: default
+spec:
+  writeConnectionSecretToRef:
+    name: service-manager
+    namespace: default
+  forProvider:
+    subaccountRef:
+      name: kyma-test
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: CloudManagement
+metadata:
+  name: cis-local
+  namespace: default
+spec:
+  writeConnectionSecretToRef:
+    name: cis-local
+    namespace: default
+  forProvider:
+    serviceManagerRef:
+      name: servicemanager-test
+    subaccountRef:
+      name: kyma-test
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: kyma-azure
+spec:
+  forProvider:
+    serviceName: kymaruntime
+    servicePlanName: azure
+    amount: 1
+    subaccountRef:
+      name: kyma-test
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: cis-entitlement
+  namespace: default
+spec:
+  forProvider:
+    serviceName: cis
+    servicePlanName: local
+    enable: true
+    subaccountRef:
+      name: kyma-test
+---
+apiVersion: environment.btp.sap.crossplane.io/v1alpha1
+kind: KymaEnvironment
+metadata:
+  name: my-kyma-instance
+spec:
+  subaccountRef:
+    name: kyma-test
+  cloudManagementRef:
+    name: cis-local
+  writeConnectionSecretToRef:
+    name: kyma-kubeconfig-local
+    namespace: default
+  forProvider:
+    planName: azure
+    parameters:
+      region: northeurope
+      machineType: Standard_D4_v3
+      autoScalerMin: 2
+      autoScalerMax: 20
+      oidc:
+        issuerURL: <ISSUER_URL>
+        clientID: <CLIENT_ID>
+        usernameClaim: email
+        groupsClaim: groups
+        signingAlgs: [ RS256 ]
+        usernamePrefix: "-"
+      administrators:
+      - <EMAIL>
+

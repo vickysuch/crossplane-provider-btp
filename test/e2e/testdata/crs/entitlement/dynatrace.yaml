@@ -1,0 +1,30 @@
+# Test case for multiple entitlements with same kind and service for only enabling (without amount)
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  namespace: default
+  name: dynatrace-entitlement
+spec:
+  forProvider:
+    enable: true
+    serviceName: dynatrace
+    servicePlanName: environment
+    subaccountRef:
+      name: entitlement-sa-test
+  providerConfigRef:
+    name: default
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  namespace: default
+  name: dynatrace-entitlement2
+spec:
+  forProvider:
+    enable: true
+    serviceName: dynatrace
+    servicePlanName: environment
+    subaccountRef:
+      name: entitlement-sa-test
+  providerConfigRef:
+    name: default

@@ -1,0 +1,14 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: cf-runtime-memory
+  namespace: default
+spec:
+  forProvider:
+    serviceName: APPLICATION_RUNTIME
+    servicePlanName: MEMORY
+    amount: 1
+    subaccountRef:
+      name: entitlement-sa-test
+  providerConfigRef:
+    name: default

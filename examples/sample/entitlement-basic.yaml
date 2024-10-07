@@ -1,0 +1,15 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Entitlement
+metadata:
+  name: postgres-svc
+  namespace: default
+spec:
+  forProvider:
+    serviceName: postgresql-db
+    servicePlanName: development
+    #enable: true
+    amount: 100
+    subaccountRef:
+      name: test-12345
+  providerConfigRef:
+    name: default

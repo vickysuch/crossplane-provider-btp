@@ -1,0 +1,17 @@
+apiVersion: meta.pkg.crossplane.io/v1alpha1
+kind: Provider
+metadata:
+  name: provider-btp
+  annotations:
+    meta.crossplane.io/maintainer: SAP Cloud Orchestrator Crossplane Maintainers <CloudOrchestrator@sap.com>
+    meta.crossplane.io/source: github.com/sap/crossplane-provider-btp
+    meta.crossplane.io/license: Apache-2.0
+    meta.orchestrate.cloud.sap/release-status: early-access
+    friendly-name.meta.crossplane.io: Provider BTP
+    meta.crossplane.io/description: |
+      A Crossplane Provider for SAP BTP. Supports with management of Subaccounts, Environments, Entitlements and Services.
+
+spec:
+  controller:
+    image: DOCKER_REGISTRY/crossplane/provider-btp-controller-amd64:VERSION
+

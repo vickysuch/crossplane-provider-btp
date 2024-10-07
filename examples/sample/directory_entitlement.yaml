@@ -1,0 +1,40 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Directory
+metadata:
+  namespace: default
+  name: directory-for-entitlement-testing
+spec:
+  forProvider:
+    description: "created by code"
+    directoryAdmins:
+      - "<EMAIL>"
+    directoryFeatures:
+      - "DEFAULT"
+      - "ENTITLEMENTS"
+    displayName: dir_for_entitlement_testing
+    labels:
+      custom_label: ["custom_value"]
+      another_label: ["onevalue", "twovalue"]
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: DirectoryEntitlement
+metadata:
+  name: directory-ent-cis-local
+spec:
+  forProvider:
+    directoryRef:
+      name: directory-for-entitlement-testing
+    planName: local
+    serviceName: cis
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: DirectoryEntitlement
+metadata:
+  name: audit-log-viewer-ent
+spec:
+  forProvider:
+    serviceName: postgresql-db
+    planName: development
+    amount: 1
+    directoryRef:
+      name: directory-for-entitlement-testing

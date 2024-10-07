@@ -1,0 +1,35 @@
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Directory
+metadata:
+  namespace: default
+  name: example-directory-parent
+spec:
+  forProvider:
+    description: "created by code"
+    directoryAdmins:
+    - "<EMAIL>"
+    directoryFeatures:
+    - "DEFAULT"
+    displayName: dir_from_code-parent
+    labels:
+      custom_label: ["custom_value"]
+      another_label: ["onevalue", "twovalue"]
+---
+apiVersion: account.btp.sap.crossplane.io/v1alpha1
+kind: Directory
+metadata:
+  namespace: default
+  name: example-directory-child
+spec:
+  forProvider:
+    directoryRef:
+      name: example-directory-parent
+    description: "created by code"
+    directoryAdmins:
+      - "<EMAIL>"
+    directoryFeatures:
+      - "DEFAULT"
+    displayName: dir_from_code-child
+    labels:
+      custom_label: ["custom_value"]
+      another_label: ["onevalue", "twovalue"]

@@ -1,0 +1,46 @@
+//go:build e2e
+
+{{ .Header }}
+{{ .GenStatement }}
+
+package e2e
+
+import (
+  "context"
+	"testing"
+
+	"github.com/sap/crossplane-provider-btp/{{ .CRD.TypeLocation }}"
+	"github.com/crossplane-contrib/xp-testing/pkg/resources"
+	"sigs.k8s.io/e2e-framework/pkg/envconf"
+	"sigs.k8s.io/e2e-framework/pkg/features"
+)
+
+func Test_{{ .CRD.Kind }}_{{ .CRD.APIVersion }}(t *testing.T) {
+	t.Skip("skipping test until the feature is implemented")
+	t.Parallel()
+
+	resource := resources.ResourceTestConfig{
+		Kind: "{{ .CRD.Kind }}",
+		Obj:  &{{ .CRD.APIVersion }}.{{ .CRD.Kind }}{},
+	}
+
+	fB := features.New(resource.Kind)
+	fB.WithLabel("kind", resource.Kind)
+	fB.Setup(
+  		func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+  			// as soon as we move to use the xp-testing framework, we can remove this manually setup and use the preconfigured one
+  			r, _ := res.New(cfg.Client().RESTConfig())
+  			_ = meta_api.AddToScheme(r.GetScheme())
+
+  			t.Logf("Apply %s", resource.Kind)
+  			resources.ImportResources(ctx, t, cfg, resource.Kind)
+
+  			return ctx
+  		},
+  )
+	fB.Assess("create", resource.AssessCreate)
+	fB.Assess("delete", resource.AssessDelete)
+	fB.Teardown(resource.Teardown)
+
+	testenv.TestInParallel(t, fB.Feature())
+}

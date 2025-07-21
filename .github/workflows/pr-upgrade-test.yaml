@@ -1,28 +1,31 @@
-name: Upgrade Test Workflow
+name: PR Upgrade Test Workflow
 
 on:
   issue_comment:
     types:
       - created
 
-  pull_request:
-    branches:
-      - main
-
 jobs:
   upgrade-test:
     runs-on: ubuntu-latest
     if: |
-      github.event_name == 'workflow_dispatch' || 
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/upgrade-test'))
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: true
+      - name: Fetch History
+        run: git fetch --prune --unshallow
 
-      - name: Clone provider-upgrade-test repo
-        run: |
-          git clone https://${{ secrets.UPGRADE_TEST_GT_TOKEN }}@${{ secrets.UPGRADE_TEST_GIT_REPO_HOST }}/cloud-orchestration/provider-upgrade-test.git
-          echo "Repository provider-upgrade-test cloned successfully."
+      - name: Set up Go
+        uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+        with:
+          go-version: '1.21'
+
+      - name: Vendor Dependencies
+        run: make vendor vendor.check
+      
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@f7ce87c1d6bead3e36075b2ce75da1f6cc28aaca # v3.9.0
         with:
@@ -48,7 +51,10 @@ jobs:
           DOCKER_REGISTRY: ${{ vars.REGISTRY_URL }}
           BUILD_REGISTRY: ${{ vars.REGISTRY_URL }}
            
-
+      - name: Clone provider-upgrade-test repo
+        run: |
+          git clone https://${{ secrets.UPGRADE_TEST_GT_TOKEN }}@${{ secrets.UPGRADE_TEST_GIT_REPO_HOST }}/cloud-orchestration/provider-upgrade-test.git
+          echo "Repository provider-upgrade-test cloned successfully."
       - name: Install CLI Tools
         run: |
           echo "Installing Kind..."

@@ -33,10 +33,10 @@ jobs:
 
       - name: Set up Version
         run: |
-          echo "BUILD_IMAGE_VERSION=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
+          echo "BUILD_IMAGE_VERSION=$(date '+%Y-%m-%d-%H-%M-%S' | tr -d '/:')" >> $GITHUB_ENV
           echo "version is $BUILD_IMAGE_VERSION"
       - name: Build Images
-        run: make build VERSION=$BUILD_IMAGE_VERSION
+        run: make build --debug=v VERSION=$BUILD_IMAGE_VERSION
         env:
           # We're using docker buildx, which doesn't actually load the images it
           # builds by default. Specifying --load does so.

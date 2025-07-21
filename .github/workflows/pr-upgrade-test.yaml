@@ -30,9 +30,13 @@ jobs:
 
       - name: Vendor Dependencies
         run: make vendor vendor.check
-      
+
+      - name: Set up Version
+        run: |
+          echo "BUILD_IMAGE_VERSION=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
+          echo "version is $BUILD_IMAGE_VERSION"
       - name: Build Images
-        run: make build
+        run: make build VERSION=$BUILD_IMAGE_VERSION
         env:
           # We're using docker buildx, which doesn't actually load the images it
           # builds by default. Specifying --load does so.
@@ -108,9 +112,7 @@ jobs:
         run: |
           cd provider-upgrade-test
           echo "Running upgrade test..."
-          PR_BUILD_VERSION=$(git rev-parse HEAD)
-          echo "version is $PR_BUILD_VERSION"
-          REGISTRY=ghcr.io/sap/crossplane-provider-btp/crossplane/provider-btp && ./provider-test.sh upgrade-test --target "ghcr.io/vickysuch/crossplane-provider-btp:${PR_BUILD_VERSION}" --source ghcr.io/sap/crossplane-provider-btp/crossplane/provider-btp:${to_test_target} --provider provider-btp   --initialize providers/provider-btp/scripts/initialize.sh --cleanup  providers/provider-btp/scripts/cleanup.sh
+          REGISTRY=ghcr.io/sap/crossplane-provider-btp/crossplane/provider-btp && ./provider-test.sh upgrade-test --target "ghcr.io/vickysuch/crossplane-provider-btp:${BUILD_IMAGE_VERSION}" --source ghcr.io/sap/crossplane-provider-btp/crossplane/provider-btp:${to_test_target} --provider provider-btp   --initialize providers/provider-btp/scripts/initialize.sh --cleanup  providers/provider-btp/scripts/cleanup.sh
         env: 
           CLIENT_ID: ${{ secrets.UPGRADE_TEST_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.UPGRADE_TEST_CLIENT_SECRET }}

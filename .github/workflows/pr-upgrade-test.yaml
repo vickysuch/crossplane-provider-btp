@@ -11,16 +11,6 @@ jobs:
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/upgrade-test'))
     steps:
-      - name: Tag head with version
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/v0.0.2',
-              sha: context.sha
-            })
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@f7ce87c1d6bead3e36075b2ce75da1f6cc28aaca # v3.9.0
         with:
@@ -41,12 +31,12 @@ jobs:
       - name: Vendor Dependencies
         run: make vendor vendor.check
 
-      # - name: Set up Version
-      #   run: |
-      #     echo "BUILD_IMAGE_VERSION=$(date '+%Y-%m-%d-%H-%M-%S' | tr -d '/:')" >> $GITHUB_ENV
-      #     echo "version is $BUILD_IMAGE_VERSION"
+      - name: Set up Version
+        run: |
+          echo "BUILD_IMAGE_VERSION=$(date '+%Y-%m-%d-%H-%M-%S' | tr -d '/:')" >> $GITHUB_ENV
+          echo "version is $BUILD_IMAGE_VERSION"
       - name: Build Images
-        run: make build --debug=v PLATFORMS=linux_amd64
+        run: make build --debug=v VERSION=$BUILD_IMAGE_VERSION PLATFORMS=linux_amd64
         env:
           # We're using docker buildx, which doesn't actually load the images it
           # builds by default. Specifying --load does so.
